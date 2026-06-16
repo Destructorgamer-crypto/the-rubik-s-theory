@@ -18,7 +18,6 @@
         @keyframes gradientLoop { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
 
         .container { background: #050505; padding: 50px; border-radius: 15px; }
-
         header { text-align: center; margin-bottom: 50px; }
         h1 { color: #fff; font-size: 3em; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 10px; }
         
@@ -28,20 +27,14 @@
 
         .page { display: none; max-width: 800px; margin: auto; }
         .active { display: block; animation: fadeIn 0.6s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { color: #fff; border-left: 3px solid var(--c-blue); padding-left: 15px; margin-top: 40px; }
-        
-        /* Estilo para los pasos y desplegables */
-        .step-container { margin-bottom: 15px; }
-        .step-btn { 
-            width: 100%; background: #111; color: #fff; border: 1px solid #333; 
-            padding: 15px; text-align: left; cursor: pointer; border-radius: 5px; 
-        }
-        .step-content { 
-            display: none; padding: 20px; background: #0a0a0a; 
-            border: 1px solid #222; border-top: none; 
-        }
+        .step-container { margin-bottom: 10px; }
+        .step-btn { width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 15px; text-align: left; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .step-btn:hover { background: #222; }
+        .step-content { display: none; padding: 20px; background: #0a0a0a; border: 1px solid #222; border-top: none; white-space: pre-line; }
+        code { background: #222; padding: 2px 5px; border-radius: 3px; color: var(--c-yellow); font-family: monospace; }
+        strong { color: #fff; }
     </style>
 </head>
 <body>
@@ -58,38 +51,42 @@
         </nav>
 
         <div id="inicio" class="page active">
-            <h2>El estándar</h2>
-            <p>Aquí reside toda la información necesaria para el dominio total del cubo.</p>
+            <h2>Manifiesto de la Teoría</h2>
+            <p>Bienvenido a <strong>The Rubik's Theory</strong>. Esta es la web definitiva para dominar el cubo. No somos un simple manual; somos el repositorio técnico donde analizamos el cubo como un sistema geométrico y algebraico de 26 piezas orbitando un núcleo.</p>
+            <p>Aquí, el objetivo no es la memorización ciega, sino la comprensión del sistema. Si buscas el estándar de estudio, has llegado al lugar correcto.</p>
         </div>
 
         <div id="principiante" class="page">
-            <h2>Método Principiante: Paso a Paso</h2>
-            
-            <!-- Ejemplo de paso con desplegable -->
-            <div class="step-container">
-                <button class="step-btn" onclick="toggleStep('p1')">1. La Cruz Blanca ▶</button>
-                <div id="p1" class="step-content">
-                    <p>La cruz blanca es la base de todo. Debes alinear las aristas blancas con su centro lateral correspondiente. No hay algoritmos aquí, es pura intuición espacial.</p>
-                </div>
-            </div>
-
-            <div class="step-container">
-                <button class="step-btn" onclick="toggleStep('p2')">2. Primera Capa (Esquinas) ▶</button>
-                <div id="p2" class="step-content">
-                    <p>Insertar las esquinas. Aquí es donde introduces el algoritmo fundamental: <strong>R U R' U'</strong> (El Sexy Move).</p>
-                </div>
-            </div>
-            
-            <!-- Puedes añadir hasta el paso 7 siguiendo este mismo formato -->
+            <h2>Método Principiante: Fases</h2>
+            <div id="fases-container"></div>
         </div>
     </div>
 </div>
 
 <script>
+    const fases = [
+        { t: "Fase 0: Anatomía y Orientación", c: "La base de la teoría es saber qué tienes en las manos.\n\nLos Centros: Solo tienen 1 color. No se mueven. El blanco es opuesto al amarillo, rojo al naranja y verde al azul.\nLas Aristas: Tienen 2 colores. Forman la cruz.\nLas Esquinas: Tienen 3 colores." },
+        { t: "Fase 1: El Lenguaje Técnico (Notación)", c: "Cada cara tiene una letra: U(Up), D(Down), F(Front), R(Right), L(Left), B(Back).\n- Letra sola: Sentido horario.\n- Letra con ('): Sentido anti-horario.\n- Letra con (2): Dos giros (180 grados)." },
+        { t: "Fase 2: La Cruz Perfecta", c: "Busca aristas blancas y alinéalas con sus centros laterales. No busques colores, busca ejes. La cruz está mal hecha si los colores laterales no coinciden con sus centros.\n\nEjercicio: Intenta hacer la cruz blanca 5 veces seguidas." },
+        { t: "Fase 3: Los Vértices y el Ciclo de Inserción", c: "El algoritmo maestro: <code>R U R' U'</code> (Sexy Move).\n1. Busca esquina con blanco.\n2. Posiciónala sobre su hueco.\n3. Ejecuta <code>R U R' U'</code> hasta que encaje.\n\nTeoría: R sube el hueco, U lo carga, R' baja el hueco y U' recupera la posición." },
+        { t: "Fase 4: El Cinturón (Segunda Capa)", c: "Busca aristas sin amarillo.\nDerecha: <code>U R U' R' U' F' U F</code>\nIzquierda: <code>U' L' U L U F U' F'</code>\nRecuerda: aleja, sube, une y baja." },
+        { t: "Fase 5: La Cruz Amarilla", c: "Patrones: Punto, L (9:00), Línea (horizontal).\nAlgoritmo: <code>F (R U R' U') F'</code>. ¡No olvides el F' final para proteger tu base blanca!" },
+        { t: "Fase 6: Orientar la Cruz", c: "Algoritmo: <code>R' U' R U' R' U2 R U'</code>.\nSi están opuestas, aplica el algoritmo y pasarás a adyacentes. Este baile coreografiado permuta las aristas sin destruir la base." },
+        { t: "Fase 7: Colocar las esquinas (Permutación)", c: "Busca una esquina en su casa. Si no hay ninguna, haz el algoritmo desde cualquier lado.\nAlgoritmo: <code>U R U' L' U R' U' L</code>." },
+        { t: "Fase 8: Girar las esquinas (Orientación)", c: "Peligro: ¡No muevas el cubo completo, solo la cara D!\nPon el amarillo hacia arriba, esquina abajo-derecha sin amarillo, y repite <code>R U R' U'</code>. Gira D para traer la siguiente esquina." },
+        { t: "🏆 Misión Cumplida", c: "Has vencido al caos. 'La maestría no nace de la inteligencia, sino de la práctica constante'. El cubo ya no tiene secretos para ti." }
+    ];
+
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
+
+    const container = document.getElementById('fases-container');
+    fases.forEach((f, i) => {
+        container.innerHTML += `<div class="step-container"><button class="step-btn" onclick="toggleStep('f${i}')">${f.t} ▼</button><div id="f${i}" class="step-content">${f.c}</div></div>`;
+    });
+
     function toggleStep(id) {
         const el = document.getElementById(id);
         el.style.display = (el.style.display === 'block') ? 'none' : 'block';
