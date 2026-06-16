@@ -5,13 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Rubik's Theory</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Helvetica', sans-serif; margin: 0; padding: 0; }
-        header { padding: 40px; text-align: center; border-bottom: 1px solid #333; }
-        h1 { letter-spacing: 5px; text-transform: uppercase; margin: 0; }
-        nav { display: flex; justify-content: center; gap: 20px; padding: 20px; }
-        nav a { color: #888; text-decoration: none; font-size: 0.9em; }
+        /* Estilos base */
+        body { 
+            background-color: #050505; 
+            color: #fff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            overflow-x: hidden;
+            animation: fadeIn 1.2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        header { padding: 80px 20px; text-align: center; }
+
+        h1 { 
+            font-size: 4em; 
+            letter-spacing: 8px; 
+            text-transform: uppercase; 
+            margin: 0;
+            background: linear-gradient(90deg, #fff, #444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav { display: flex; justify-content: center; gap: 40px; padding: 30px; }
+        
+        nav a { 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 1.1em; 
+            position: relative;
+            transition: 0.3s;
+        }
+
+        /* Animación del menú */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #fff;
+            transition: 0.4s;
+        }
+
         nav a:hover { color: #fff; }
-        main { padding: 40px; max-width: 800px; margin: auto; }
+        nav a:hover::after { width: 100%; }
+
+        main { 
+            padding: 50px; 
+            text-align: center; 
+            max-width: 900px; 
+            margin: auto; 
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .cta-button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            border: 1px solid #333;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        .cta-button:hover {
+            background: #fff;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -20,13 +87,14 @@
     </header>
     <nav>
         <a href="index.html">Inicio</a>
-        <a href="#">Principiante</a>
-        <a href="#">Intermedio</a>
-        <a href="#">Avanzado</a>
+        <a href="principiante.html">Principiante</a>
+        <a href="intermedio.html">Intermedio</a>
+        <a href="avanzado.html">Avanzado</a>
     </nav>
     <main>
-        <h2>Domina el Cubo. Entiende la Teoría.</h2>
-        <p>Un recurso abierto para aprender a resolver un cubo de rubik.</p>
+        <h2>Domina la lógica del cubo</h2>
+        <p>No memorices algoritmos, entiende el movimiento.</p>
+        <button class="cta-button" onclick="window.location.href='principiante.html'">COMENZAR</button>
     </main>
 </body>
 </html>
