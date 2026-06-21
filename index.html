@@ -1,115 +1,230 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>THE RUBIK'S THEORY | La Web Definitiva</title>
-    <style>
-        :root { --bg: #050505; --neon: #3e7bff; --text: #ccc; --white: #fff; --glow: 0 0 20px rgba(62, 123, 255, 0.4); }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE RUBIK'S THEORY</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --accent: #ffcc00;
+      --text: #eeeeee;
+    }
+    body {
+      margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text); text-align: center;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+      padding: 2rem; border-bottom: 4px solid var(--accent);
+    }
+    h1 { margin: 0; font-size: 3rem; letter-spacing: 4px; }
+    .subtitle { color: var(--accent); margin-top: 0.5rem; }
+    
+    nav { margin: 1.5rem 0; }
+    nav button {
+      background: transparent; border: 2px solid var(--accent);
+      color: var(--accent); padding: 10px 20px; margin: 0 10px;
+      cursor: pointer; transition: all 0.3s;
+    }
+    nav button:hover { background: var(--accent); color: black; }
 
-        /* Borde Animado con efecto de profundidad */
-        .wrapper {
-            position: relative; padding: 8px; border-radius: 25px;
-            background: linear-gradient(45deg, #fff, #ff3e3e, #3e7bff, #ff9f3e, #3eff5e, #ffe63e, #fff);
-            background-size: 400% 400%; animation: borderLoop 5s linear infinite;
-        }
-        @keyframes borderLoop { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
+    .section { display: none; padding: 2rem; max-width: 1000px; margin: 0 auto; }
+    .active { display: block; }
 
-        .container { background: var(--bg); padding: 50px; border-radius: 20px; min-height: 80vh; }
-        h1 { color: var(--white); text-align: center; font-size: 3.5em; letter-spacing: 12px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        
-        .hero-text { text-align: center; font-size: 1.2em; color: #888; margin-bottom: 50px; }
+    .video-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px; margin-top: 2rem;
+    }
+    iframe { width: 100%; border: none; border-radius: 8px; }
 
-        nav { display: flex; justify-content: center; gap: 30px; margin-bottom: 50px; }
-        .nav-btn { 
-            background: #111; color: var(--white); border: 1px solid #333; padding: 15px 40px; 
-            cursor: pointer; transition: 0.4s; border-radius: 10px; font-weight: bold; text-transform: uppercase;
-        }
-        .nav-btn:hover { border-color: var(--neon); box-shadow: var(--glow); transform: scale(1.05); }
+    .games-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px; margin-top: 2rem;
+    }
+    .game-frame {
+      border: 3px solid var(--accent); border-radius: 12px;
+      overflow: hidden; height: 400px;
+    }
 
-        .page { display: none; max-width: 850px; margin: auto; animation: fadeIn 0.8s; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .step-btn { 
-            width: 100%; background: #111; color: var(--white); border: 1px solid #333; 
-            padding: 22px; text-align: left; cursor: pointer; border-radius: 10px;
-            display: flex; justify-content: space-between; transition: 0.4s; margin-bottom: 12px;
-            font-size: 1.1em;
-        }
-        .step-btn:hover { border-color: var(--neon); background: #1a1a1a; box-shadow: var(--glow); }
-        
-        .step-content { 
-            max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0,1,0,1);
-            background: #080808; border: 1px solid #222; border-radius: 0 0 10px 10px;
-        }
-        .content-inner { padding: 30px; white-space: pre-wrap; color: #aaa; font-size: 1.05em; }
-        .active-content { max-height: 5000px; transition: max-height 1s ease-in; }
-        
-        code { color: #ffe63e; font-family: 'Courier New', monospace; font-weight: bold; background: #1a1a1a; padding: 2px 6px; }
-    </style>
+    #secret-hint { cursor: pointer; user-select: none; margin: 2rem 0; font-size: 1.1rem; }
+    
+    .admin-panel {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: #1a1a1a; border: 3px solid var(--accent); padding: 2rem;
+      display: none; z-index: 1000; width: 90%; max-width: 500px;
+    }
+    input, button { margin: 8px 0; padding: 10px; width: 100%; }
+  </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="container">
-        <h1>THE RUBIK'S THEORY</h1>
-        <p class="hero-text">"La complejidad es solo una ilusión nacida de la falta de método."</p>
-        
-        <nav>
-            <button class="nav-btn" onclick="showPage('inicio')">El Manifiesto</button>
-            <button class="nav-btn" onclick="showPage('principiante')">Método Principiante</button>
-        </nav>
+  <header>
+    <h1>THE RUBIK'S THEORY</h1>
+    <p class="subtitle">Comprende el cubo antes de dominarlo</p>
+    <nav>
+      <button onclick="showSection('theory')">Teoría</button>
+      <button onclick="showSection('games')">Zona de Juegos</button>
+    </nav>
+  </header>
 
-        <div id="inicio" class="page active">
-            <h2>El origen de la Teoría</h2>
-            <p>Bienvenido a <strong>The Rubik's Theory</strong>. Has entrado en el repositorio donde el caos se vuelve orden. La mayoría de las personas ven en un cubo de Rubik un acertijo irresoluble o una prueba de velocidad frenética; nosotros vemos un <strong>sistema algebraico cerrado</strong>.</p>
-            <p>Este proyecto surge de una necesidad: la de entender el cubo en lugar de simplemente memorizar secuencias de movimientos sin sentido. Para dominar el cubo, primero debes comprender que no estás girando colores, estás manipulando 26 piezas que orbitan alrededor de un núcleo inamovible. Cada movimiento que realizas es una permutación dentro de un grupo matemático.</p>
-            <h3>¿Por qué The Rubik's Theory?</h3>
-            <p>Porque hemos desglosado el método tradicional en niveles de comprensión técnica. Desde la fase 0, donde establecemos la anatomía de la máquina, hasta las fases finales de permutación y orientación. Aquí no aprenderás "trucos", aprenderás <strong>flujo</strong>. Aprenderás a anticipar qué pieza se moverá y a dónde irá antes de que tus dedos completen el giro. Estás aquí para dejar de jugar y empezar a entender el sistema.</p>
-            <p>Prepárate para transformar tu forma de ver el cubo. El caos ha terminado.</p>
-        </div>
-
-        <div id="principiante" class="page">
-            <div id="fases-container"></div>
-        </div>
+  <!-- === TEORÍA === -->
+  <div id="theory" class="section active">
+    <h2>Bienvenido a la Teoría del Cubo</h2>
+    <p>Explora los fundamentos del Rubik's Cube.</p>
+    
+    <div id="secret-hint" onclick="checkSecret()">🔒 Haz clic aquí 7 veces para desbloquear la zona secreta...</div>
+    
+    <div class="video-grid">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/7j4x2z5z7zM" title="Cómo resolver el cubo de Rubik para principiantes"></iframe>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/9spDG4G8L0E" title="Notaciones oficiales del cubo"></iframe>
     </div>
-</div>
+  </div>
 
-<script>
-    const data = [
-        { t: "Fase 0: Anatomía y Orientación", c: "La base de la teoría es saber qué tienes en las manos. Lo primero que debes entender es que el cubo no es un objeto sólido, sino un conjunto de 26 piezas que orbitan alrededor de un núcleo.\n\nLos Centros: * Solo tienen 1 color. IMPORTANTE: No se mueven. Si el centro es Blanco, esa cara siempre será blanca. El centro es tu punto de referencia absoluto. Apunta esto: El blanco siempre es opuesto al amarillo, el rojo al naranja y el verde al azul.\nLas Aristas: Tienen 2 colores. Son las piezas que forman la 'cruz' en cada cara. Solo pueden ocupar el lugar de otra arista.\nLas Esquinas: * Tienen 3 colores. Son las piezas que completan las esquinas. Solo pueden ocupar el lugar de otra esquina." },
-        { t: "Fase 1: El Lenguaje Técnico (Notación)", c: "No podemos avanzar si no hablamos el mismo idioma. Copia esta tabla en tus apuntes.\n\nPara mover el cubo con precisión, cada cara tiene una letra (basada en su nombre en inglés). Un giro significa rotar esa cara 90 grados.\n\nNotación:\nRecuerda: Cada letra gira en el sentido de las agujas del reloj.\nLas letras con ( ' ) significa que van al sentido contario de las normales.\nLas letras con un 2 detrás indican que se hacen dos giros en esa letra, da igual la dirección.\nU - Up (arriba) | D - Down (abajo) | F - Front (frente) | R - Right (derecha) | L - Left (izquierda) | B - Back (detrás)" },
-        { t: "Fase 2: El Primer Objetivo - La Cruz Perfecta", c: "No busques resolver colores. Busca alinear ejes.\nEl primer paso real es crear una cruz blanca en la cara superior. Pero no cualquier cruz.\nPaso A: Busca una arista que tenga color Blanco.\nPaso B: Mira su segundo color.\nPaso C: Lleva esa pieza a su sitio de forma que el Blanco conecte con el centro Blanco, y el color lateral conecte con su centro.\n\nDibujo para tus apuntes: Imagina una 'Línea' de color que baja desde la cara blanca hasta el centro correspondiente. Si los colores laterales no coinciden, la cruz está mal hecha.\n\nEjercicio de Práctica: Haz la cruz blanca 5 veces seguidas." },
-        { t: "Fase 3: Los Vértices y el Ciclo de Inserción", c: "Esta es, posiblemente, la fase más importante. En The Rubik's Theory, lo llamamos Ciclo de Inserción (Sexy Move).\n\n1. El concepto de 'Coordenada de Esquina': Debe estar situada entre los 3 centros correspondientes.\n2. El Algoritmo Maestro: <code>R U R' U'</code>\nR: Subes la cara derecha.\nU: Giras la capa superior a la izquierda.\nR': Bajas la cara derecha.\nU': Giras la capa superior a la derecha.\n\n3. Cómo ejecutar: Busca una esquina con blanco en la capa superior, posicionala sobre su hueco y repite el algoritmo hasta que el blanco mire hacia abajo." },
-        { t: "Fase 4: El Cinturón del Cubo (Segunda Capa)", c: "Objetivo: Colocar las 4 aristas del nivel medio.\n\nPreparación: Busca una arista en la capa superior sin amarillo y alinea el color frontal con su centro.\n\nAlgoritmos:\nDerecha: <code>U R U' R' U' F' U F</code>\nIzquierda: <code>U' L' U L U F U' F'</code>\n\nNo estás moviendo piezas, estás emparejando. Si el blanco sube a la superficie, vas por buen camino." },
-        { t: "Fase 5: La Cruz Amarilla", c: "Objetivo: Dibujar una cruz de color amarillo.\n1. Identifica tu patrón (Punto, L pequeña, Línea o Cruz).\n2. El Algoritmo de Activación:\n<code>F (R U R' U') F'</code>\nF: Giras la cara frontal a la derecha.\n(R U R' U'): Ejecutas un 'Sexy Move'.\nF': Devuelves la cara frontal.\n\nSi tienes la 'L', colócala como un reloj a las 9:00. Si tienes la línea, ponla horizontal." },
-        { t: "Fase 6: Orientar la Cruz (Coincidir Colores)", c: "Objetivo: Lograr que los cuatro 'brazos' coincidan con los colores de los centros laterales.\n1. Busca coincidencias (Adyacentes o Opuestas).\n2. Posicionamiento: Si son Adyacentes, pon una en DELANTE y otra a la DERECHA.\n3. El Algoritmo (Sune):\n<code>R' U' R U' R' U2 R U'</code>\n\nEste movimiento es un baile coreografiado que solo altera la posición de las aristas amarillas sin tocar nada de lo resuelto abajo." },
-        { t: "Fase 7: Colocar las esquinas (Permutación)", c: "Objetivo: Que cada esquina esté en su 'casa'.\nBusca: ¿Alguna está en su lugar correcto? (Ej: Amarillo-Rojo-Azul entre centros amarillo, rojo y azul).\nPosiciona: Pon la buena en la esquina abajo-derecha.\nEjecuta:\n<code>U R U' L' U R' U' L</code>" },
-        { t: "Fase 8: Girar las esquinas (Orientación)", c: "Objetivo: Rotar las esquinas para que el color amarillo mire hacia arriba.\n1. Gira el cubo: Cara blanca arriba, amarillo abajo.\n2. Enfoca: Esquina abajo-derecha sin amarillo.\n3. El Ciclo:\n<code>(R U R' U')</code>\nRepite hasta que el amarillo mire abajo. \nEL PASO CRUCIAL: No muevas el cubo. Gira solo la capa inferior (D) para traer la siguiente esquina." },
-        { t: "🏆 Misión Cumplida", c: "Has vencido al caos. Resolver el cubo por primera vez no es solo una victoria manual; es una prueba de que eres capaz de seguir un método, mantener la calma y confiar en el proceso.\n\n'El secreto no reside en la memoria, sino en la repetición. Si no practicas, no mejoras; si no repites, no trasciendes. El verdadero secreto es, y siempre será, la práctica.'" }
+  <!-- === ZONA DE JUEGOS === -->
+  <div id="games" class="section">
+    <h2>Zona Secreta - Juegos & Música</h2>
+    <p>¡Disfruta!</p>
+
+    <!-- Spotify -->
+    <h3>🎵 Música</h3>
+    <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" width="80%" height="380" frameborder="0" allowfullscreen></iframe>
+
+    <!-- YouTube extra -->
+    <h3>🎥 Vídeos</h3>
+    <div class="video-grid">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9wgxcq" title="YouTube video"></iframe>
+    </div>
+
+    <h3>🎮 Juegos</h3>
+    <div id="games-grid" class="games-grid"></div>
+
+    <button onclick="showAdmin()" style="margin-top: 2rem;">🔧 Panel Admin</button>
+  </div>
+
+  <!-- === PANEL ADMIN === -->
+  <div id="admin-panel" class="admin-panel">
+    <h3>Panel de Administrador</h3>
+    <input type="password" id="admin-pass" placeholder="Contraseña">
+    <button onclick="loginAdmin()">Entrar</button>
+    
+    <div id="admin-content" style="display:none;">
+      <h4>Añadir Juego</h4>
+      <input type="text" id="game-name" placeholder="Nombre del juego">
+      <input type="url" id="game-url" placeholder="URL del iframe (juego)">
+      <button onclick="addGame()">Añadir Juego</button>
+      
+      <h4>Juegos actuales</h4>
+      <ul id="game-list"></ul>
+      
+      <button onclick="logoutAdmin()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <script>
+    let secretClicks = 0;
+    const SECRET_NEEDED = 7;
+    let games = JSON.parse(localStorage.getItem('rubikGames')) || [
+      { name: "2048", url: "https://play2048.co/" },
+      { name: "Tetris", url: "https://tetris.com/play-tetris" },
+      { name: "Snake", url: "https://playsnake.org/" },
+      { name: "Pac-Man", url: "https://freepacman.org/" }
     ];
 
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+    function saveGames() {
+      localStorage.setItem('rubikGames', JSON.stringify(games));
     }
 
-    const container = document.getElementById('fases-container');
-    data.forEach((item, i) => {
-        container.innerHTML += `
-            <div class="step-container">
-                <button class="step-btn" onclick="toggle(${i})">${item.t} <span>▼</span></button>
-                <div id="content-${i}" class="step-content">
-                    <div class="content-inner">${item.c}</div>
-                </div>
-            </div>
+    function renderGames() {
+      const container = document.getElementById('games-grid');
+      container.innerHTML = '';
+      games.forEach((game, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <h4>${game.name}</h4>
+          <iframe class="game-frame" src="${game.url}" allowfullscreen></iframe>
+          <button onclick="removeGame(${index})" style="margin-top:8px;">Eliminar</button>
         `;
-    });
-
-    function toggle(i) {
-        document.getElementById(`content-${i}`).classList.toggle('active-content');
+        container.appendChild(div);
+      });
     }
-</script>
+
+    function addGame() {
+      const name = document.getElementById('game-name').value.trim();
+      const url = document.getElementById('game-url').value.trim();
+      if (name && url) {
+        games.push({ name, url });
+        saveGames();
+        renderGames();
+        document.getElementById('game-name').value = '';
+        document.getElementById('game-url').value = '';
+      }
+    }
+
+    function removeGame(index) {
+      if (confirm('¿Eliminar este juego?')) {
+        games.splice(index, 1);
+        saveGames();
+        renderGames();
+      }
+    }
+
+    function showSection(section) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(section).classList.add('active');
+    }
+
+    function checkSecret() {
+      secretClicks++;
+      if (secretClicks >= SECRET_NEEDED) {
+        alert('¡Zona secreta desbloqueada! Ve a "Zona de Juegos"');
+        secretClicks = 0;
+        showSection('games');
+      }
+    }
+
+    // Admin
+    let isAdmin = false;
+    const ADMIN_PASSWORD = "rubik2026";   // Cambia esto por la que quieras
+
+    function showAdmin() {
+      document.getElementById('admin-panel').style.display = 'block';
+    }
+
+    function loginAdmin() {
+      const pass = document.getElementById('admin-pass').value;
+      if (pass === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.getElementById('admin-content').style.display = 'block';
+        renderAdminList();
+      } else {
+        alert('Contraseña incorrecta');
+      }
+    }
+
+    function renderAdminList() {
+      const ul = document.getElementById('game-list');
+      ul.innerHTML = '';
+      games.forEach((g, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${g.name} <button onclick="removeGame(${i}); renderAdminList()">Eliminar</button>`;
+        ul.appendChild(li);
+      });
+    }
+
+    function logoutAdmin() {
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('admin-content').style.display = 'none';
+      document.getElementById('admin-pass').value = '';
+      isAdmin = false;
+    }
+
+    // Inicializar
+    window.onload = () => {
+      renderGames();
+      // Mostrar teoría al inicio
+    };
+  </script>
 </body>
 </html>
