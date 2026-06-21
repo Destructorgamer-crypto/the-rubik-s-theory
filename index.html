@@ -49,7 +49,8 @@
     }
     .secret-content {
       opacity: 0;
-      transition: opacity 1.5s ease;
+      transition: all 1.5s ease;
+      padding-top: 5vh;
     }
     .secret-content.show {
       opacity: 1;
@@ -75,31 +76,40 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
-      margin-top: 2rem;
+      margin: 3rem auto;
+      max-width: 1000px;
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 1.2s ease;
+      transform: translateY(40px);
+      transition: all 1.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
     .games-grid.show {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* Lluvia Matrix */
+    /* Lluvia Matrix más visible */
     #binary-rain {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: -1;
-      opacity: 0.25;
+      opacity: 0.45;
       pointer-events: none;
     }
 
     .admin-panel {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: #110000; border: 3px solid #ff0000; 
-      padding: 2rem; width: 90%; max-width: 480px;
-      display: none; z-index: 1000; color: #ff9999;
+      position: fixed; 
+      top: 50%; left: 50%; 
+      transform: translate(-50%, -50%);
+      background: #110000; 
+      border: 3px solid #ff0000; 
+      padding: 2rem; 
+      width: 90%; 
+      max-width: 480px;
+      display: none; 
+      z-index: 10000; 
+      color: #ff9999;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
     }
     input {
       width: 100%; padding: 12px; margin: 10px 0;
@@ -115,32 +125,27 @@
     <p style="margin-top: 12px; font-size: 1.3rem; opacity: 0.95;">Comprende el cubo antes de dominarlo</p>
   </header>
 
-  <!-- === TEORÍA (contenido ampliado) === -->
+  <!-- === TEORÍA === -->
   <div id="theory" class="content">
     <h2>La Teoría del Cubo de Rubik</h2>
-    <p>El Cubo de Rubik fue inventado en 1974 por el arquitecto y profesor húngaro Ernő Rubik. Originalmente lo creó como una herramienta para enseñar geometría tridimensional a sus alumnos, pero pronto se convirtió en uno de los juguetes más vendidos de la historia.</p>
+    <p>El Cubo de Rubik fue inventado en 1974 por el arquitecto y profesor húngaro Ernő Rubik. Originalmente lo creó como herramienta docente, pero se convirtió en un fenómeno mundial.</p>
     
     <h3>Complejidad Matemática</h3>
-    <p>El cubo 3x3 tiene exactamente <strong>43.252.003.274.489.856.000</strong> combinaciones posibles. Esto equivale a más de 43 quintillones de posiciones distintas. Sin embargo, todas ellas son resolubles en un máximo de 20 movimientos (God's Number).</p>
+    <p>El cubo 3x3 tiene exactamente <strong>43.252.003.274.489.856.000</strong> combinaciones posibles.</p>
     
     <h3>Notación Oficial</h3>
-    <p>Se utilizan las siguientes letras para indicar las caras:<br>
-    <strong>F</strong> (Front), <strong>R</strong> (Right), <strong>U</strong> (Up), <strong>B</strong> (Back), <strong>L</strong> (Left), <strong>D</strong> (Down).<br>
-    Un apóstrofe (') indica giro en sentido contrario a las agujas del reloj.</p>
+    <p><strong>F</strong> Front, <strong>R</strong> Right, <strong>U</strong> Up, <strong>B</strong> Back, <strong>L</strong> Left, <strong>D</strong> Down.</p>
 
     <h3>Método Principiante - Los 7 Pasos</h3>
-    <p>El método más recomendado para principiantes se divide en 7 pasos:</p>
     <ol>
-      <li><strong>Cruz Blanca</strong>: Formar una cruz en la cara blanca con los bordes correctamente alineados.</li>
-      <li><strong>Esquinas Blancas</strong>: Colocar las cuatro esquinas blancas en su posición correcta.</li>
-      <li><strong>Capa Media</strong>: Resolver los cuatro bordes de la capa intermedia.</li>
-      <li><strong>Cruz Amarilla</strong>: Crear una cruz en la cara amarilla.</li>
-      <li><strong>Orientar Bordes Amarillos</strong>: Colocar los bordes amarillos en su posición correcta.</li>
-      <li><strong>Esquinas Amarillas</strong>: Posicionar correctamente las esquinas de la última capa.</li>
-      <li><strong>Orientar Esquinas Amarillas</strong>: Girar las esquinas para que todos los colores coincidan.</li>
+      <li><strong>Cruz Blanca</strong>: Resolver la cruz en la cara blanca.</li>
+      <li><strong>Esquinas Blancas</strong>: Colocar las esquinas de la primera capa.</li>
+      <li><strong>Capa Media</strong>: Resolver los bordes intermedios.</li>
+      <li><strong>Cruz Amarilla</strong>: Hacer la cruz en la cara amarilla.</li>
+      <li><strong>Orientar Bordes Amarillos</strong>: Colocar correctamente los bordes de la última capa.</li>
+      <li><strong>Esquinas Amarillas</strong>: Posicionar las esquinas de la última capa.</li>
+      <li><strong>Orientar Esquinas Amarillas</strong>: Girar las esquinas hasta completar el cubo.</li>
     </ol>
-
-    <p>Este método es accesible para cualquier persona y es la base para luego aprender métodos más avanzados como el CFOP (el más utilizado en competiciones).</p>
 
     <p>Haz clic en el título superior para acceder al contenido oculto.</p>
   </div>
@@ -153,27 +158,27 @@
       <div class="content">
         <div id="games-grid" class="games-grid"></div>
 
-        <div style="text-align: center; margin: 3rem 0;">
+        <div style="text-align: center; margin-top: 4rem;">
           <button onclick="showAdmin()">Panel de Administrador</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- === PANEL ADMIN === -->
+  <!-- === PANEL ADMIN (mejorado) === -->
   <div id="admin-panel" class="admin-panel">
     <h3>Panel de Administrador</h3>
     <input type="password" id="admin-pass" placeholder="Contraseña">
     <button onclick="loginAdmin()">Entrar</button>
     
-    <div id="admin-content" style="display:none;">
+    <div id="admin-content" style="display:none; margin-top: 1rem;">
       <h4>Añadir Juego</h4>
       <input type="text" id="game-name" placeholder="Nombre del juego">
       <input type="url" id="game-url" placeholder="URL del juego">
       <button onclick="addGame()">Añadir</button>
 
       <h4>Juegos Actuales</h4>
-      <ul id="game-list"></ul>
+      <ul id="game-list" style="padding-left: 0;"></ul>
 
       <button onclick="logoutAdmin()">Cerrar Sesión</button>
     </div>
@@ -229,34 +234,33 @@
       ul.innerHTML = '';
       games.forEach((game, i) => {
         const li = document.createElement('li');
-        li.style.margin = '10px 0';
+        li.style.margin = '12px 0';
         li.innerHTML = `${game.name} — <button onclick="removeGame(${i})">Eliminar</button>`;
         ul.appendChild(li);
       });
     }
 
-    // Transición con animación
     function enterSecret() {
       const theory = document.getElementById('theory');
       const header = document.getElementById('theory-header');
       
+      theory.style.transition = 'opacity 0.8s';
+      header.style.transition = 'opacity 0.8s';
       theory.style.opacity = '0';
       header.style.opacity = '0';
 
       setTimeout(() => {
         document.body.classList.remove('theory-mode');
         document.body.classList.add('secret-mode');
-        
         document.getElementById('secret').style.display = 'block';
         
         setTimeout(() => {
           document.getElementById('secret-content').classList.add('show');
           document.getElementById('games-grid').classList.add('show');
-        }, 100);
-      }, 800);
+        }, 150);
+      }, 700);
     }
 
-    // Admin
     function showAdmin() {
       document.getElementById('admin-panel').style.display = 'block';
     }
@@ -277,7 +281,7 @@
       document.getElementById('admin-pass').value = '';
     }
 
-    // Lluvia binaria mejorada
+    // Lluvia Matrix más grande y visible
     function createBinaryRain() {
       const canvas = document.getElementById('binary-rain');
       const ctx = canvas.getContext('2d');
@@ -290,32 +294,31 @@
       window.addEventListener('resize', resize);
 
       const chars = '01';
-      const fontSize = 15;
+      const fontSize = 18;           // más grande
       const columns = canvas.width / fontSize;
       const drops = Array(Math.floor(columns)).fill(1);
 
       function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        ctx.fillStyle = '#ff4444';
+        ctx.fillStyle = '#ff5555';
         ctx.font = `${fontSize}px monospace`;
 
         for (let i = 0; i < drops.length; i++) {
           const text = chars[Math.floor(Math.random() * chars.length)];
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
           
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.96) {
             drops[i] = 0;
           }
           drops[i]++;
         }
       }
 
-      setInterval(draw, 40);
+      setInterval(draw, 35);
     }
 
-    // Inicializar
     window.onload = () => {
       renderGames();
       createBinaryRain();
