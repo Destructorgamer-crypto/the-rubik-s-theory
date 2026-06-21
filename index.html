@@ -6,81 +6,103 @@
   <title>THE RUBIK'S THEORY</title>
   <style>
     :root {
-      --bg: #0f0f0f;
-      --accent: #ffcc00;
-      --text: #eeeeee;
+      --accent: #ff0000;
     }
     body {
-      margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-      line-height: 1.6;
+      margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.7;
+      transition: all 0.6s ease;
     }
 
-    /* ====================== TEORÍA - Colores Rubik ====================== */
+    /* ====================== TEORÍA ====================== */
     .theory-mode {
-      background: #111111;
-      color: #eeeeee;
+      background: #0f0f0f;
+      color: #f0f0f0;
     }
     .theory-header {
-      background: linear-gradient(180deg, #e30613, #ff6600);
+      background: linear-gradient(135deg, #e30613, #ff6600);
       color: white;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem 3rem;
       text-align: center;
-      border-bottom: 6px solid #ffffff;
     }
-    .theory-accent { color: #00ccff; }
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+      letter-spacing: 6px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    h1:hover { transform: scale(1.05); }
 
-    /* ====================== ZONA SECRETA - Rojo y Negro ====================== */
+    .content {
+      max-width: 850px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ====================== ZONA SECRETA (Rojo y Negro) ====================== */
     .secret-mode {
-      background: #0a0a0a;
+      background: #000000;
       color: #ff3333;
     }
     .secret-header {
-      background: linear-gradient(180deg, #1a0000, #330000);
-      color: #ff3333;
-      padding: 2rem 1rem;
+      background: #1a0000;
+      padding: 2.5rem 1rem;
       text-align: center;
-      border-bottom: 4px solid #ff0000;
+      border-bottom: 4px solid var(--accent);
     }
-    .secret-accent { color: #ff6666; }
-
-    h1 { 
-      margin: 0; 
-      font-size: 2.8rem; 
-      letter-spacing: 4px; 
-      cursor: pointer;
-    }
-    .subtitle { margin-top: 0.5rem; font-size: 1.2rem; }
-
-    .content {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+    .secret-header h1 {
+      font-size: 2.6rem;
+      margin: 0;
+      letter-spacing: 4px;
     }
 
     button {
       background: transparent;
-      border: 2px solid;
-      padding: 12px 20px;
-      margin: 8px;
+      border: 2px solid var(--accent);
+      color: #ff6666;
+      padding: 14px 24px;
+      margin: 10px;
+      font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.3s;
-      font-size: 1.1rem;
+    }
+    button:hover {
+      background: var(--accent);
+      color: black;
+      transform: translateY(-3px);
     }
 
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
       margin-top: 2rem;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .games-grid.show { opacity: 1; }
+
+    /* Canvas para lluvia binaria */
+    #binary-rain {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
     }
 
     .admin-panel {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: #1a0000; border: 3px solid #ff0000; padding: 2rem;
-      display: none; z-index: 1000; width: 90%; max-width: 500px;
-      color: #ffcccc;
+      background: #110000; border: 3px solid #ff0000; 
+      padding: 2rem; width: 90%; max-width: 480px;
+      display: none; z-index: 1000; color: #ff9999;
     }
-    input { padding: 10px; width: 100%; margin: 8px 0; font-size: 1rem; background: #220000; color: #ffcccc; border: 1px solid #ff0000; }
+    input {
+      width: 100%; padding: 12px; margin: 10px 0;
+      background: #220000; border: 1px solid #ff0000; color: #ffcccc;
+    }
   </style>
 </head>
 <body class="theory-mode">
@@ -88,67 +110,64 @@
   <!-- Header Teoría -->
   <header class="theory-header" id="theory-header">
     <h1 onclick="goToSecret()">THE RUBIK'S THEORY</h1>
-    <p class="subtitle theory-accent">Comprende el cubo antes de dominarlo</p>
+    <p style="margin-top: 10px; font-size: 1.25rem; opacity: 0.9;">Comprende el cubo antes de dominarlo</p>
   </header>
 
   <!-- === TEORÍA === -->
   <div id="theory" class="content">
     <h2>La Teoría del Cubo de Rubik</h2>
-    <p>El Cubo de Rubik, inventado en 1974 por el profesor húngaro Ernő Rubik, es uno de los rompecabezas más icónicos de la historia. Aunque parece un simple juguete, encierra una complejidad matemática fascinante.</p>
+    <p>El Cubo de Rubik, inventado en 1974 por Ernő Rubik, es uno de los rompecabezas más famosos del mundo. Detrás de su apariencia sencilla se esconde una enorme complejidad matemática.</p>
     
-    <h3 style="color:#ffcc00">Grupos y Permutaciones</h3>
-    <p>El cubo 3x3 tiene exactamente 43.252.003.274.489.856.000 posiciones posibles...</p>
+    <h3>Permutaciones</h3>
+    <p>El cubo 3x3 tiene más de 43 quintillones de posiciones posibles.</p>
     
-    <h3 style="color:#00ccff">Notación Oficial</h3>
-    <p>Las letras F, R, U, B, L, D representan las caras del cubo...</p>
-
-    <h3 style="color:#00ff88">Métodos de Resolución</h3>
-    <p>Principiante, CFOP, Roux, ZZ...</p>
+    <h3>Notación</h3>
+    <p>Se utiliza la notación estándar: F (Front), R (Right), U (Up), B (Back), L (Left), D (Down).</p>
     
-    <p>Haz clic en el título de arriba para acceder al contenido oculto.</p>
+    <h3>Métodos</h3>
+    <p>Los más populares son el método principiante y el CFOP, utilizado por los speedcubers profesionales.</p>
   </div>
 
-  <!-- === ZONA SECRETA (Rojo/Negro) === -->
-  <div id="secret" class="content section" style="display:none;">
+  <!-- === ZONA SECRETA === -->
+  <div id="secret" class="content" style="display: none;">
     <header class="secret-header">
-      <h1>🔓 ZONA SECRETA</h1>
-      <p class="subtitle secret-accent">Acceso Restringido</p>
+      <h1>ZONA SECRETA</h1>
     </header>
 
-    <h2 style="color:#ff6666">🎵 Música</h2>
-    <div style="left: 0; width: 100%; height: 352px; position: relative;">
-      <iframe src="https://open.spotify.com/embed/playlist/6hfxHDFSpmrx2EeA7JKwjv?utm_source=oembed" 
-              style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0; border-radius: 12px;" 
-              allowfullscreen allow="clipboard-write *; encrypted-media *; fullscreen *; picture-in-picture *;">
-      </iframe>
+    <div class="content">
+      <h2 style="text-align:center; margin: 2rem 0;">Juegos</h2>
+      <div id="games-grid" class="games-grid"></div>
+
+      <div style="text-align: center; margin-top: 3rem;">
+        <button onclick="showAdmin()">Panel de Administrador</button>
+      </div>
     </div>
-
-    <h2 style="color:#ff6666">🎮 Juegos</h2>
-    <div id="games-grid" class="games-grid"></div>
-
-    <button onclick="showAdmin()" style="border-color:#ff0000; color:#ff6666;">🔧 Panel de Administrador</button>
   </div>
+
+  <!-- Canvas Lluvia Binaria -->
+  <canvas id="binary-rain"></canvas>
 
   <!-- === PANEL ADMIN === -->
   <div id="admin-panel" class="admin-panel">
     <h3>Panel de Administrador</h3>
     <input type="password" id="admin-pass" placeholder="Contraseña">
-    <button onclick="loginAdmin()" style="background:#ff0000; color:black;">Entrar</button>
+    <button onclick="loginAdmin()">Entrar</button>
     
     <div id="admin-content" style="display:none;">
-      <h4>Añadir Nuevo Juego</h4>
+      <h4>Añadir Juego</h4>
       <input type="text" id="game-name" placeholder="Nombre del juego">
       <input type="url" id="game-url" placeholder="URL del juego">
-      <button onclick="addGame()" style="background:#ff0000; color:black;">Añadir Juego</button>
+      <button onclick="addGame()">Añadir</button>
 
       <h4>Juegos Actuales</h4>
-      <ul id="game-list" style="text-align:left;"></ul>
+      <ul id="game-list"></ul>
 
       <button onclick="logoutAdmin()">Cerrar Sesión</button>
     </div>
   </div>
 
   <script>
+    // Datos de juegos
     let games = JSON.parse(localStorage.getItem('rubikGames')) || [
       { name: "2048", url: "https://play2048.co/" },
       { name: "Tetris", url: "https://tetris.com/play-tetris" },
@@ -165,11 +184,10 @@
     function renderGames() {
       const container = document.getElementById('games-grid');
       container.innerHTML = '';
+      
       games.forEach(game => {
         const btn = document.createElement('button');
-        btn.textContent = `🎮 ${game.name}`;
-        btn.style.borderColor = '#ff0000';
-        btn.style.color = '#ff6666';
+        btn.textContent = game.name;
         btn.onclick = () => window.open(game.url, '_blank');
         container.appendChild(btn);
       });
@@ -189,7 +207,7 @@
     }
 
     function removeGame(index) {
-      if (confirm('¿Eliminar este juego?')) {
+      if (confirm('Eliminar este juego?')) {
         games.splice(index, 1);
         saveGames();
         renderGames();
@@ -202,16 +220,25 @@
       ul.innerHTML = '';
       games.forEach((game, i) => {
         const li = document.createElement('li');
-        li.innerHTML = `${game.name} — <button onclick="removeGame(${i})" style="color:#ff6666">Eliminar</button>`;
+        li.style.margin = '8px 0';
+        li.innerHTML = `${game.name} — <button onclick="removeGame(${i})">Eliminar</button>`;
         ul.appendChild(li);
       });
     }
 
+    // Ir a zona secreta con animación
     function goToSecret() {
       document.getElementById('theory').style.display = 'none';
-      document.getElementById('secret').style.display = 'block';
+      const secret = document.getElementById('secret');
+      secret.style.display = 'block';
+      
       document.body.classList.remove('theory-mode');
       document.body.classList.add('secret-mode');
+
+      // Animación de aparición de los juegos
+      setTimeout(() => {
+        document.getElementById('games-grid').classList.add('show');
+      }, 400);
     }
 
     // Admin
@@ -235,9 +262,48 @@
       document.getElementById('admin-pass').value = '';
     }
 
+    // Lluvia binaria (Matrix style)
+    function createBinaryRain() {
+      const canvas = document.getElementById('binary-rain');
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const chars = '01';
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = Array(Math.floor(columns)).fill(1);
+
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#ff3333';
+        ctx.font = `${fontSize}px monospace`;
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+
+      setInterval(draw, 35);
+    }
+
     // Inicializar
     window.onload = () => {
       renderGames();
+      createBinaryRain();
     };
   </script>
 </body>
