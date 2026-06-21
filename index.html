@@ -9,45 +9,41 @@
   
   <style>
     :root { --accent: #ff0000; }
-    body {
+    body, html {
       margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #000; color: #ff3333; overflow-x: hidden;
+      background: #000; color: #ff3333; overflow: hidden; height: 100vh;
     }
 
-    /* TEORÍA */
-    .theory-mode { background: #0f0f0f; color: #f0f0f0; }
-    .theory-header {
+    header {
       background: linear-gradient(135deg, #e30613, #ff6600);
       color: white;
       padding: 4.5rem 1rem 3rem;
       text-align: center;
-      transition: all 0.8s ease;
+      cursor: pointer;
     }
     h1 {
       font-size: 3.2rem;
       margin: 0;
       letter-spacing: 8px;
-      cursor: pointer;
-      transition: transform 0.3s;
     }
     h1:hover { transform: scale(1.05); }
 
-    /* ZONA SECRETA */
-    .secret-mode { background: #000000; color: #ff3333; }
-    .secret-content {
-      opacity: 0;
-      transition: all 1.5s ease;
-      padding-top: 40px;
+    .secret-container {
+      height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-top: 30px;
+      text-align: center;
+      scrollbar-width: none;
     }
-    .secret-content.show { opacity: 1; }
+    .secret-container::-webkit-scrollbar { display: none; }
 
     button {
       background: transparent;
       border: 2px solid var(--accent);
       color: #ff6666;
-      padding: 15px 36px;
+      padding: 16px 36px;
       margin: 12px;
-      font-size: 1.18rem;
+      font-size: 1.2rem;
       cursor: pointer;
       transition: all 0.3s;
     }
@@ -62,7 +58,7 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 22px;
       max-width: 1200px;
-      margin: 25px auto;
+      margin: 20px auto;
       padding: 0 20px;
     }
 
@@ -74,30 +70,21 @@
       opacity: 0.5;
       pointer-events: none;
     }
-
-    /* Admin Panel */
-    .admin-panel {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: #110000; border: 3px solid #ff0000; padding: 25px;
-      z-index: 10000; color: #ff9999; max-width: 480px; width: 90%;
-      box-shadow: 0 0 40px rgba(255,0,0,0.6);
-      cursor: move;
-    }
   </style>
 </head>
-<body class="theory-mode">
+<body>
 
-  <header class="theory-header" id="theory-header">
-    <h1 onclick="enterSecret()">THE RUBIK'S THEORY</h1>
+  <header onclick="enterSecret()">
+    <h1>THE RUBIK'S THEORY</h1>
     <p style="margin-top: 15px; font-size: 1.35rem; opacity: 0.95;">Comprende el cubo antes de dominarlo</p>
   </header>
 
   <!-- TEORÍA -->
-  <div id="theory" class="content" style="padding:40px 20px; text-align:center; max-width:900px; margin:0 auto;">
+  <div id="theory" style="padding: 40px 20px; text-align:center; max-width:900px; margin:0 auto;">
     <h2>La Teoría del Cubo de Rubik</h2>
     <p>El Cubo de Rubik fue inventado en 1974 por Ernő Rubik.</p>
     <h3>Método Principiante - Los 7 Pasos</h3>
-    <ol style="display:inline-block; text-align:left;">
+    <ol style="display:inline-block; text-align:left; font-size:1.1rem;">
       <li>Cruz Blanca</li>
       <li>Esquinas Blancas</li>
       <li>Capa Media</li>
@@ -112,10 +99,12 @@
   <div id="secret" style="display: none;">
     <canvas id="binary-rain"></canvas>
     
-    <div class="secret-content" id="secret-content">
-      <div style="text-align: center;">
-        <button onclick="toggleSpotify()">Abrir Spotify</button>
-        <div id="games-grid" class="games-grid"></div>
+    <div class="secret-container">
+      <button onclick="toggleSpotify()">Abrir Spotify</button>
+      
+      <div id="games-grid" class="games-grid"></div>
+
+      <div style="margin-top: 40px;">
         <button onclick="showAdmin()">Panel de Administrador</button>
       </div>
     </div>
@@ -130,8 +119,8 @@
     <button onclick="toggleSpotify()" style="margin-top:8px; background:#ff0000; color:black; width:100%;">Cerrar Spotify</button>
   </div>
 
-  <!-- Panel Admin -->
-  <div id="admin-panel" class="admin-panel">
+  <!-- Admin Panel -->
+  <div id="admin-panel" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#110000; border:3px solid #ff0000; padding:25px; z-index:10000; color:#ff9999; max-width:480px; width:90%;">
     <h3>Panel de Administrador</h3>
     <input type="password" id="admin-pass" placeholder="Contraseña" style="width:100%; padding:12px; margin:10px 0;">
     <button onclick="loginAdmin()" style="width:100%;">Entrar</button>
@@ -165,7 +154,7 @@
     function loadGames() {
       gamesRef.on('value', (snapshot) => {
         games = [];
-        snapshot.forEach(child => games.push({id: child.key, ...child.val()}));
+        snapshot.forEach(child => games.push({ id: child.key, ...child.val() }));
         renderGames();
       });
     }
@@ -181,11 +170,13 @@
       });
     }
 
+    // Abrir en about:blank
     function openGame(url) {
       const win = window.open('about:blank', '_blank');
       if (win) {
         win.document.write(`
-          <!DOCTYPE html><html><head><title>Juego</title></head>
+          <!DOCTYPE html>
+          <html><head><title>Juego</title></head>
           <body style="margin:0;padding:0;overflow:hidden;background:#000;">
             <iframe src="${url}" style="width:100vw;height:100vh;border:none;" allowfullscreen></iframe>
           </body></html>
@@ -220,17 +211,9 @@
     }
 
     function enterSecret() {
-      document.getElementById('theory').style.opacity = '0';
-      document.getElementById('theory-header').style.opacity = '0';
-
-      setTimeout(() => {
-        document.body.classList.add('secret-mode');
-        document.getElementById('secret').style.display = 'block';
-        setTimeout(() => {
-          document.getElementById('secret-content').classList.add('show');
-          loadGames();
-        }, 300);
-      }, 700);
+      document.getElementById('theory').style.display = 'none';
+      document.getElementById('secret').style.display = 'block';
+      loadGames();
     }
 
     const ADMIN_PASSWORD = "28815342";
@@ -250,39 +233,6 @@
     function toggleSpotify() {
       const embed = document.getElementById('spotify-embed');
       embed.style.display = embed.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // Draggable Admin Panel
-    function makeDraggable() {
-      const panel = document.getElementById('admin-panel');
-      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-      panel.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
-
-      function elementDrag(e) {
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        panel.style.top = (panel.offsetTop - pos2) + "px";
-        panel.style.left = (panel.offsetLeft - pos1) + "px";
-        panel.style.transform = "none";
-      }
-
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
     }
 
     // Lluvia Matrix
@@ -315,10 +265,7 @@
       setInterval(draw, 35);
     }
 
-    window.onload = () => {
-      createBinaryRain();
-      makeDraggable();
-    };
+    window.onload = () => createBinaryRain();
   </script>
 </body>
 </html>
