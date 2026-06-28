@@ -101,6 +101,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 30px;
         }
 
         .round-display {
@@ -363,6 +364,7 @@
             align-items: center;
             margin-top: 1rem;
             position: relative;
+            height: 60px;
         }
 
         .instructions {
@@ -767,6 +769,10 @@
             border: 3px solid #ffffff;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
+
+        .timer-tick-anim {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -911,7 +917,7 @@
         const hardModeToggle = document.getElementById('hardModeToggle');
         const colorModeToggle = document.getElementById('colorModeToggle');
 
-        hardToggle.addEventListener('click', () => {
+        hardModeToggle.addEventListener('click', () => {
             if (isColorMode) return;
             if (currentState === GAME_STATES.IDLE || currentState === GAME_STATES.SUMMARY) {
                 isHardMode = !isHardMode;
@@ -920,10 +926,9 @@
             }
         });
 
-        // Al pulsar el botón de modo color se alterna el modo de juego
         colorModeToggle.addEventListener('click', () => {
             if (currentState !== GAME_STATES.SUMMARY && currentState !== GAME_STATES.IDLE && currentState !== GAME_STATES.STOPPED) {
-                return; // En mitad de la ronda si está corriendo, no se permite volver atrás de repente
+                return;
             }
             isColorMode = !isColorMode;
             if (isColorMode) {
@@ -938,19 +943,14 @@
             if (isHardMode) body.classList.add('mode-hard');
             if (isColorMode) body.classList.add('mode-color');
             
-            const colorSw = document.getElementById('colorToggleSwitch');
-            const hardSw = document.getElementById('toggleSwitch');
             const topTogglesArea = document.getElementById('topTogglesArea');
-            const topNav = document.getElementById('TopBarContainer');
             
             if(isColorMode) {
-                // Cuando el modo color está activo, se reemplaza/desaparece la zona de "difícil y color" y se pone "TIME" para volver
                 topTogglesArea.innerHTML = `
                     <div class="color-mode-toggle" id="backToTimeModeBtn" style="color: #cbd5e1; font-weight:900; cursor:pointer;">
                         <span>← TIME</span>
                     </div>
                 `;
-                // Añadir evento al botón recién creado
                 document.getElementById('backToTimeModeBtn').addEventListener('click', () => {
                     isColorMode = false;
                     updateModesClasses();
@@ -967,19 +967,27 @@
                         <div class="toggle-switch" id="colorToggleSwitch"></div>
                     </div>
                 `;
-                // Re-bindear eventos de los toggles restaurados
+                
                 document.getElementById('hardModeToggle').addEventListener('click', () => {
                     if (isColorMode) return;
                     isHardMode = !isHardMode;
                     updateModesClasses();
                     nextRound();
                 });
-                document.getElementById('colorToggleSwitch').closest('.color-mode-toggle').addEventListener('click', () => {
+                document.getElementById('colorModeToggle').addEventListener('click', () => {
+                    if (currentState !== GAME_STATES.SUMMARY && currentState !== GAME_STATES.IDLE && currentState !== GAME_STATES.STOPPED) {
+                        return;
+                    }
                     isColorMode = !isColorMode;
+                    if (isColorMode) isHardMode = false;
                     updateModesClasses();
                     nextRound();
                 });
             }
+            
+            // Re-vincular elementos visuales en pantalla normal
+            const sw1 = document.getElementById('toggleSwitch');
+            if(sw1 && isHardMode) sw1.closest('.hard-mode-toggle').classList.add('active'); 
         }
 
         function generateTarget() {
@@ -1018,7 +1026,7 @@
             
             updateModesClasses();
             
-            document.getElementById('TopBarContainer').style.display = "flex";
+            document.getElementById('cardTopBarContainer').style.display = "flex";
             mainDisplayArea.innerHTML = `
                 <div class="timer-val" id="timerVal">0.00</div>
                 <div class="score-label" id="scoreLabel"></div>
@@ -1044,9 +1052,8 @@
             targetS = Math.floor(Math.random() * 60) + 20;
             targetL = Math.floor(Math.random() * 60) + 20;
             
-            document.getElementById('TopBarContainer').style.display = "flex";
+            document.getElementById('cardTopBarContainer').style.display = "flex";
             
-            // Pantalla completa para memorizar el color
             mainDisplayArea.innerHTML = `
                 <div class="color-game-area">
                     <div class="memory-fullscreen-box" style="background-color: hsl(${targetH}, ${targetS}%, ${targetL}%);" id="fullMemBox">
@@ -1076,7 +1083,6 @@
         function startColorAdjust() {
             currentState = GAME_STATES.RUNNING;
             
-            // Se elimina la etiqueta 'oculto' y se deja únicamente la caja del mismo tamaño que al principio con el color que estás cambiando
             mainDisplayArea.innerHTML = `
                 <div class="color-game-area">
                     <div class="color-adjust-row">
@@ -1127,7 +1133,6 @@
         }
 
         function stopColorGameRound() {
-            // Impedir que se valide si sigue en la pantalla de memoria
             if (memoryTimerCount > 0) return;
 
             const hS = document.getElementById('hueSlider').value;
@@ -1165,7 +1170,6 @@
                 <div class="score-val animate-pop" id="scoreValDisplay" style="font-size: 4.5rem; color: var(--success-color);">0.00 / 10.00</div>
             `;
 
-            // Animación ascendente de puntos en la ronda de color también
             const scoreValDisplay = document.getElementById('scoreValDisplay');
             let currentSVal = 0;
             const ptsInterval = setInterval(() => {
@@ -1379,7 +1383,6 @@
                 playSuccessSparkle();
             }
 
-            // Animación ascendente de puntos en modo tiempo aplicado correctamente
             let currentScoreSequence = 0;
             const scoreAnimationInterval = setInterval(() => {
                 currentScoreSequence += finalScore / 40;
@@ -1401,8 +1404,8 @@
         function showSummaryScreen() {
             currentState = GAME_STATES.SUMMARY;
             
-            const TopBarContainer = document.getElementById('TopBarContainer');
-            if (TopBarContainer) TopBarContainer.style.display = "none";
+            const cardTop = document.getElementById('cardTopBarContainer');
+            if (cardTop) cardTop.style.display = "none";
             if (cardBottomNav) cardBottomNav.style.display = "none"; 
 
             restartSummaryContainer.style.display = "flex";
@@ -1419,9 +1422,8 @@
                 `;
             }).join('');
 
-            const maxTotalPts = isColorMode ? "50.00" : "50.00";
+            const maxTotalPts = "50.00";
 
-            // Animación ascendente incorporada en la puntuación final
             mainDisplayArea.innerHTML = `
                 <div class="summary-title" id="sumTitleVal">0.00<span style="font-size: 2.5rem; font-weight: 900; color: var(--text-muted);">/${maxTotalPts}</span></div>
                 <div class="summary-subtitle">${getSummaryFlavorText(totalScore)}</div>
@@ -1436,7 +1438,6 @@
                 </div>
             `;
 
-            // Efecto contador / subida de puntos
             const sumTitleVal = document.getElementById('sumTitleVal');
             let currentSum = 0.00;
             const sumInterval = setInterval(() => {
