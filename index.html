@@ -118,6 +118,7 @@
             display: flex;
             gap: 1.5rem;
             align-items: center;
+            height: 30px;
         }
 
         .hard-mode-toggle, .color-mode-toggle {
@@ -580,7 +581,7 @@
             20% { transform: translateX(-8px); }
             40% { transform: translateX(8px); }
             60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
+            85% { transform: translateX(4px); }
         }
 
         .fade-in { animation: fadeInMsg 0.5s ease-in; }
@@ -598,7 +599,7 @@
 
         body.mode-hard .summary-title { text-shadow: 0 0 15px #ff0055; }
 
-        /* Estilos optimizados pantalla de color */
+        /* Estilos pantalla de color optimizados */
         .color-game-area {
             display: flex;
             flex-direction: column;
@@ -663,8 +664,10 @@
             height: 140px;
         }
 
+        /* Misma proporción y tamaño de la caja de memoria inicial */
         .color-preview-box {
-            width: 130px;
+            width: 100%;
+            max-width: 320px;
             height: 130px;
             border-radius: 20px;
             border: 3px solid #ffffff;
@@ -676,6 +679,7 @@
             padding-bottom: 8px;
             transition: opacity 0.4s ease;
             animation: popIn 0.4s ease-out;
+            position: relative;
         }
         
         .color-box-label {
@@ -775,8 +779,8 @@
             </button>
         </div>
 
-        <div class="card-top" id="cardTopNav">
-            <div class="top-toggles">
+        <div class="card-top" id="cardTopBarContainer">
+            <div class="top-toggles" id="topTogglesArea">
                 <div class="hard-mode-toggle" id="hardModeToggle">
                     <span>Modo Difícil</span>
                     <div class="toggle-switch" id="toggleSwitch"></div>
@@ -902,33 +906,31 @@
         const restartNavBtn = document.getElementById('restartNavBtn');
         const restartSummaryContainer = document.getElementById('restartSummaryContainer');
         const restartSummaryBtn = document.getElementById('restartSummaryBtn');
-        const cardTopNav = document.getElementById('cardTopNav');
         const mainDisplayArea = document.getElementById('mainDisplayArea');
         const cardBottomNav = document.getElementById('cardBottomNav');
         const hardModeToggle = document.getElementById('hardModeToggle');
-        const toggleSwitch = document.getElementById('toggleSwitch');
         const colorModeToggle = document.getElementById('colorModeToggle');
-        const colorToggleSwitch = document.getElementById('colorToggleSwitch');
 
-        hardModeToggle.addEventListener('click', () => {
+        hardToggle.addEventListener('click', () => {
+            if (isColorMode) return;
             if (currentState === GAME_STATES.IDLE || currentState === GAME_STATES.SUMMARY) {
                 isHardMode = !isHardMode;
-                if (isHardMode) isColorMode = false;
                 updateModesClasses();
                 nextRound();
             }
         });
 
+        // Al pulsar el botón de modo color se alterna el modo de juego
         colorModeToggle.addEventListener('click', () => {
-            if (currentState === GAME_STATES.IDLE || currentState === GAME_STATES.SUMMARY) {
-                isColorMode = !isColorMode;
-                // Si entra en modo color, desmarcamos hard mode y reseteamos el flujo
-                if (isColorMode) {
-                    isHardMode = false;
-                }
-                updateModesClasses();
-                nextRound();
+            if (currentState !== GAME_STATES.SUMMARY && currentState !== GAME_STATES.IDLE && currentState !== GAME_STATES.STOPPED) {
+                return; // En mitad de la ronda si está corriendo, no se permite volver atrás de repente
             }
+            isColorMode = !isColorMode;
+            if (isColorMode) {
+                isHardMode = false;
+            }
+            updateModesClasses();
+            nextRound();
         });
 
         function updateModesClasses() {
@@ -938,14 +940,45 @@
             
             const colorSw = document.getElementById('colorToggleSwitch');
             const hardSw = document.getElementById('toggleSwitch');
+            const topTogglesArea = document.getElementById('topTogglesArea');
+            const topNav = document.getElementById('TopBarContainer');
             
-            if(colorSw) {
-                if(isColorMode) colorSw.style.backgroundColor = '#4f46e5';
-                else colorSw.style.backgroundColor = '#333';
-            }
-            if(hardSw) {
-                if(isHardMode) hardSw.style.backgroundColor = '#be185d';
-                else hardSw.style.backgroundColor = '#333';
+            if(isColorMode) {
+                // Cuando el modo color está activo, se reemplaza/desaparece la zona de "difícil y color" y se pone "TIME" para volver
+                topTogglesArea.innerHTML = `
+                    <div class="color-mode-toggle" id="backToTimeModeBtn" style="color: #cbd5e1; font-weight:900; cursor:pointer;">
+                        <span>← TIME</span>
+                    </div>
+                `;
+                // Añadir evento al botón recién creado
+                document.getElementById('backToTimeModeBtn').addEventListener('click', () => {
+                    isColorMode = false;
+                    updateModesClasses();
+                    triggerRestart();
+                });
+            } else {
+                topTogglesArea.innerHTML = `
+                    <div class="hard-mode-toggle" id="hardModeToggle">
+                        <span>Modo Difícil</span>
+                        <div class="toggle-switch" id="toggleSwitch"></div>
+                    </div>
+                    <div class="color-mode-toggle" id="colorModeToggle">
+                        <span>Modo Color</span>
+                        <div class="toggle-switch" id="colorToggleSwitch"></div>
+                    </div>
+                `;
+                // Re-bindear eventos de los toggles restaurados
+                document.getElementById('hardModeToggle').addEventListener('click', () => {
+                    if (isColorMode) return;
+                    isHardMode = !isHardMode;
+                    updateModesClasses();
+                    nextRound();
+                });
+                document.getElementById('colorToggleSwitch').closest('.color-mode-toggle').addEventListener('click', () => {
+                    isColorMode = !isColorMode;
+                    updateModesClasses();
+                    nextRound();
+                });
             }
         }
 
@@ -972,7 +1005,7 @@
             if (score >= 45) return "¡Impecable! Tienes una memoria y precisión asombrosas.";
             if (score >= 35) return "Excelente nivel. Tienes un gran control visual.";
             if (score >= 25) return "Buen resultado, pero aún puedes afinar más tu memoria de color.";
-            return "Sigue practicando, no es tan fácil clavar los tonos de memoria.";
+            return "Sigue practicando, no es tan fácil clocar los tonos de memoria.";
         }
 
         function resetGameDisplay() {
@@ -985,7 +1018,7 @@
             
             updateModesClasses();
             
-            cardTopNav.style.display = "flex";
+            document.getElementById('TopBarContainer').style.display = "flex";
             mainDisplayArea.innerHTML = `
                 <div class="timer-val" id="timerVal">0.00</div>
                 <div class="score-label" id="scoreLabel"></div>
@@ -1011,7 +1044,7 @@
             targetS = Math.floor(Math.random() * 60) + 20;
             targetL = Math.floor(Math.random() * 60) + 20;
             
-            cardTopNav.style.display = "flex";
+            document.getElementById('TopBarContainer').style.display = "flex";
             
             // Pantalla completa para memorizar el color
             mainDisplayArea.innerHTML = `
@@ -1043,12 +1076,10 @@
         function startColorAdjust() {
             currentState = GAME_STATES.RUNNING;
             
+            // Se elimina la etiqueta 'oculto' y se deja únicamente la caja del mismo tamaño que al principio con el color que estás cambiando
             mainDisplayArea.innerHTML = `
                 <div class="color-game-area">
                     <div class="color-adjust-row">
-                        <div class="color-preview-box" style="background-color: #222; border-color:#666;" id="targetPreviewBox">
-                            <span class="color-box-label" style="color:#aaa;">OCULTO</span>
-                        </div>
                         <div class="color-preview-box" id="userColorBox" style="background-color: hsl(0, 50%, 50%);">
                             <span class="color-box-label">TU COPIA</span>
                         </div>
@@ -1131,8 +1162,20 @@
                     </div>
                 </div>
                 <div class="score-label" style="font-size: 1rem; color: var(--text-muted); text-transform:uppercase; margin-top:10px;">Puntos de memoria</div>
-                <div class="score-val animate-pop" style="font-size: 4.5rem; color: var(--success-color);">${roundPts.toFixed(2)} / 10.00</div>
+                <div class="score-val animate-pop" id="scoreValDisplay" style="font-size: 4.5rem; color: var(--success-color);">0.00 / 10.00</div>
             `;
+
+            // Animación ascendente de puntos en la ronda de color también
+            const scoreValDisplay = document.getElementById('scoreValDisplay');
+            let currentSVal = 0;
+            const ptsInterval = setInterval(() => {
+                currentSVal += roundPts / 30;
+                if(currentSVal >= roundPts) {
+                    currentSVal = roundPts;
+                    clearInterval(ptsInterval);
+                }
+                scoreValDisplay.textContent = `${currentSVal.toFixed(2)} / 10.00`;
+            }, 20);
             
             if (round < 5) {
                 instructions.textContent = "Siguiente ronda de memoria preparada. Pulsa siguiente.";
@@ -1320,8 +1363,7 @@
 
             window.currTimerVal.textContent = elapsedTime.toFixed(2);
             window.currScoreLabel.textContent = `Nota Ronda ${round}`;
-            window.currScoreVal.textContent = finalScore.toFixed(2) + " / 10.00";
-            window.currScoreVal.classList.add('animate-pop');
+            
             instructions.classList.add('fade-in');
 
             if (finalScore < 5.00) {
@@ -1337,6 +1379,18 @@
                 playSuccessSparkle();
             }
 
+            // Animación ascendente de puntos en modo tiempo aplicado correctamente
+            let currentScoreSequence = 0;
+            const scoreAnimationInterval = setInterval(() => {
+                currentScoreSequence += finalScore / 40;
+                if(currentScoreSequence >= finalScore) {
+                    currentScoreSequence = finalScore;
+                    clearInterval(scoreAnimationInterval);
+                }
+                window.currScoreVal.textContent = currentScoreSequence.toFixed(2) + " / 10.00";
+            }, 20);
+            window.currScoreVal.classList.add('animate-pop');
+
             if (round < 5) {
                 instructions.textContent = "¡Ronda parada! Pulsa espacio o el botón para la siguiente ronda.";
             } else {
@@ -1347,7 +1401,8 @@
         function showSummaryScreen() {
             currentState = GAME_STATES.SUMMARY;
             
-            if (cardTopNav) cardTopNav.style.display = "none";
+            const TopBarContainer = document.getElementById('TopBarContainer');
+            if (TopBarContainer) TopBarContainer.style.display = "none";
             if (cardBottomNav) cardBottomNav.style.display = "none"; 
 
             restartSummaryContainer.style.display = "flex";
