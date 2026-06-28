@@ -45,7 +45,6 @@
             transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Regla: Fondo del body negro en Modo Difícil */
         body.mode-hard {
             background-color: #000000;
         }
@@ -78,7 +77,6 @@
             100% { transform: translateY(-8px); }
         }
 
-        /* Glitch central frecuente e intenso */
         body.mode-hard .game-card {
             animation: cardFloat 4s ease-in-out infinite alternate, glitchCardCenter 2.2s infinite ease-in-out;
         }
@@ -108,7 +106,6 @@
             color: #fbcfe8;
         }
 
-        /* Toggle de Modo Difícil */
         .hard-mode-toggle {
             display: flex;
             align-items: center;
@@ -175,7 +172,6 @@
             position: relative;
         }
 
-        /* Glitch numérico suave y más frecuente */
         body.mode-hard .timer-val, 
         body.mode-hard .score-val {
             position: relative;
@@ -202,7 +198,6 @@
             line-height: 0.9;
         }
 
-        /* Preparación modo normal */
         body:not(.mode-hard).state-preparing .timer-val {
             background: linear-gradient(45deg, var(--prep-color-start), var(--prep-color-end));
             -webkit-background-clip: text;
@@ -210,7 +205,6 @@
             animation: pulseDegradado 1.5s ease-in-out infinite alternate, shakePrep 0.3s ease-in-out infinite alternate;
         }
 
-        /* Preparación modo difícil */
         body.mode-hard.state-preparing .timer-val {
             background: linear-gradient(45deg, var(--prep-hard-start), var(--prep-hard-end));
             -webkit-background-clip: text;
@@ -240,7 +234,6 @@
             color: var(--run-hard-color);
         }
 
-        /* Ocultar el tiempo en modo difícil al correr */
         body.mode-hard.state-running .timer-val {
             font-size: 3rem;
             color: transparent;
@@ -267,7 +260,6 @@
             letter-spacing: -2px;
         }
 
-        /* Resumen estilo dialed */
         .summary-title {
             font-size: 5.5rem;
             font-weight: 900;
@@ -345,9 +337,10 @@
         .round-box:nth-child(5) { animation-delay: 0.5s; }
 
         @keyframes fillGridChain {
-            0% { transform: scaleY(0) scaleX(0.8); opacity: 0; }
-            60% { transform: scaleY(1.08) scaleX(1); opacity: 1; }
-            100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+            0% { transform: scaleY(0) scaleX(0.8) skew(10deg); opacity: 0; filter: blur(4px); }
+            40% { transform: scaleY(1.15) scaleX(1) skew(-4deg); opacity: 1; filter: blur(0px); }
+            70% { transform: scaleY(0.95) scaleX(1) skew(2deg); }
+            100% { transform: scaleY(1) scaleX(1) skew(0deg); opacity: 1; }
         }
 
         .round-box::after {
@@ -365,7 +358,6 @@
             z-index: 2;
         }
 
-        /* Colores notas */
         .round-box.grade-poor { background-color: #591919; } 
         .round-box.grade-ok { background-color: #854d0e; } 
         .round-box.grade-good { background-color: #401959; } 
@@ -377,6 +369,7 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
+            position: relative; /* Contenedor para posicionar el botón de reiniciar si hace falta */
         }
 
         .instructions {
@@ -440,7 +433,73 @@
             transform: scale(1.1);
         }
 
-        /* Animaciones generales */
+        /* Contenedor del botón flotante de reiniciar independiente */
+        .restart-container {
+            position: absolute;
+            bottom: 38px;
+            right: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            animation: fadeInMsg 0.4s ease-in;
+        }
+
+        .restart-label {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        body.mode-hard .restart-label {
+            color: #fbcfe8;
+            border-color: #9d174d;
+            background: rgba(32, 2, 13, 0.6);
+        }
+
+        .btn-restart-game {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        body.mode-hard .btn-restart-game {
+            background: #fbcfe8;
+            box-shadow: 0 0 10px rgba(219, 39, 119, 0.3);
+        }
+
+        .btn-restart-game:hover {
+            transform: scale(1.12);
+            background: #e0e0e0;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        body.mode-hard .btn-restart-game:hover {
+            background: #ffffff;
+            box-shadow: 0 0 20px rgba(219, 39, 119, 0.8);
+        }
+
+        .btn-restart-game svg {
+            fill: #000000;
+            width: 18px;
+            height: 18px;
+        }
+
         .animate-pop {
             animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -476,41 +535,12 @@
             100% { opacity: 1; }
         }
 
-        @keyframes spinPulse {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.05); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-        
-        .timer-tick-anim {
-            animation: tickPulse 0.15s ease-out;
-        }
-        @keyframes tickPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        /* Más animaciones pantalla final (bouncy/elástica secuencial y destellos) */
-        @keyframes fillGridChain {
-            0% { transform: scaleY(0) scaleX(0.8) skew(10deg); opacity: 0; filter: blur(4px); }
-            40% { transform: scaleY(1.15) scaleX(1) skew(-4deg); opacity: 1; filter: blur(0px); }
-            70% { transform: scaleY(0.95) scaleX(1) skew(2deg); }
-            100% { transform: scaleY(1) scaleX(1) skew(0deg); opacity: 1; }
-        }
-
         @keyframes countUpIn {
             0% { opacity: 0; transform: translateY(20px) scale(0.9); }
             60% { transform: translateY(-5px) scale(1.02); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .summary-title {
-            animation: countUpIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-        
-        /* Destello sutil en el resumen en modo difícil */
         body.mode-hard .summary-title {
             text-shadow: 0 0 15px #ff0055;
         }
@@ -519,6 +549,13 @@
 <body>
 
     <div class="game-card" id="gameCard">
+        <div class="restart-container" id="restartContainer" style="display: none;">
+            <div class="restart-label" id="restartLabel">Reiniciar</div>
+            <button class="btn-restart-game" id="restartBtn" aria-label="Reiniciar Partida">
+                <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a6 6 0 1 1-6 6H1a8 8 0 1 0 11-8z"/></svg>
+            </button>
+        </div>
+
         <div class="card-top" id="cardTopNav">
             <div class="hard-mode-toggle" id="hardModeToggle">
                 <span>Modo Difícil</span>
@@ -539,7 +576,7 @@
                 Mantén espacio para cargar. Suelta para iniciar el conteo, pulsa otra vez para parar.
             </div>
             <button class="btn-reset" id="nextBtn" aria-label="Siguiente">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
     </div>
@@ -572,12 +609,11 @@
             osc.stop(audioCtx.currentTime + duration);
         }
 
-        // Sonido de victoria/transición extra
         function playSuccessSparkle() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const now = audioCtx.currentTime;
             
-            const freqs = [523.25, 659.25, 783.99, 1046.5]; // Arpegio Do Mayor
+            const freqs = [523.25, 659.25, 783.99, 1046.5];
             freqs.forEach((f, i) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -625,6 +661,8 @@
         const scoreVal = document.getElementById('scoreVal');
         const instructions = document.getElementById('instructions');
         const nextBtn = document.getElementById('nextBtn');
+        const restartContainer = document.getElementById('restartContainer');
+        const restartBtn = document.getElementById('restartBtn');
         const cardTopNav = document.getElementById('cardTopNav');
         const mainDisplayArea = document.getElementById('mainDisplayArea');
         const cardBottomNav = document.getElementById('cardBottomNav');
@@ -685,6 +723,12 @@
             `;
             cardBottomNav.style.display = "flex";
             
+            // Ocultar botón de reinicio flotante
+            restartContainer.style.display = "none";
+            
+            // Reemplazar icono de abajo a la derecha por flecha de retroceso (por si venía de SUMMARY)
+            nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>';
+
             const recreatedTimerVal = document.getElementById('timerVal');
             const recreatedScoreLabel = document.getElementById('scoreLabel');
             const recreatedScoreVal = document.getElementById('scoreVal');
@@ -714,8 +758,6 @@
             gameCard.classList.add('animate-pop');
         }
 
-        // Nueva funcionalidad: Dar al espacio para pasar de ronda (cuando estamos en stopped)
-        // También funciona el botón de abajo a la derecha.
         function advanceRoundOrSummary() {
             if (currentState === GAME_STATES.SUMMARY) {
                 nextRound();
@@ -732,6 +774,14 @@
         }
 
         nextBtn.addEventListener('click', advanceRoundOrSummary);
+
+        // Funcionalidad del nuevo botón flotante de reiniciar
+        restartBtn.addEventListener('click', () => {
+            round = 1;
+            totalScore = 0;
+            roundScores = [];
+            nextRound();
+        });
 
         generateTarget();
         window.currTimerVal = timerVal;
@@ -758,7 +808,6 @@
                 else if (currentState === GAME_STATES.RUNNING) {
                     stopTimer();
                 }
-                // Añadido: Salto de ronda al presionar espacio en estado STOPPED
                 else if (currentState === GAME_STATES.STOPPED) {
                     advanceRoundOrSummary();
                 }
@@ -847,7 +896,7 @@
                 playTone(660, 0.3, 'sine'); 
             } else {
                 window.currScoreVal.style.color = 'var(--success-color)';
-                playSuccessSparkle(); // Sonido adicional alegre al acertar
+                playSuccessSparkle();
             }
 
             if (round < 5) {
@@ -861,7 +910,11 @@
             currentState = GAME_STATES.SUMMARY;
             
             cardTopNav.style.display = "none";
-            cardBottomNav.style.display = "flex"; 
+            // Ocultar botón de abajo a la derecha cuando sale la pantalla final
+            cardBottomNav.style.display = "none"; 
+
+            // Mostrar el botón de reiniciar flotante abajo a la derecha
+            restartContainer.style.display = "flex";
 
             let roundsHtml = roundScores.map((score, idx) => {
                 let gradeClass = getGradeClass(score);
@@ -886,8 +939,7 @@
                 </div>
             `;
 
-            instructions.textContent = "Resumen final. Pulsa espacio o el botón para volver a jugar.";
-            nextBtn.innerHTML = '<svg viewBox="0 0 24 24" style="animation: spinPulse 6s linear infinite;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>';
+            instructions.textContent = "Resumen final.";
 
             playTone(1000, 0.2, 'sine');
             setTimeout(() => playTone(1200, 0.3, 'sine'), 200);
