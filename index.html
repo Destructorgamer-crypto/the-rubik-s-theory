@@ -1,271 +1,293 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE RUBIK'S THEORY</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  
-  <style>
-    :root { --accent: #ff0000; }
-    body, html {
-      margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #000; color: #ff3333; overflow: hidden; height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sincronización Táctica</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;700&display=swap');
 
-    header {
-      background: linear-gradient(135deg, #e30613, #ff6600);
-      color: white;
-      padding: 4.5rem 1rem 3rem;
-      text-align: center;
-      cursor: pointer;
-    }
-    h1 {
-      font-size: 3.2rem;
-      margin: 0;
-      letter-spacing: 8px;
-    }
-    h1:hover { transform: scale(1.05); }
+        :root {
+            --bg-color: #0f0f11;
+            --card-bg: #18181b;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --accent-prep: #27272a;
+            --accent-active: #3b82f6;
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+        }
 
-    .secret-container {
-      height: calc(100vh - 220px);
-      overflow-y: auto;
-      padding-top: 30px;
-      text-align: center;
-      scrollbar-width: none;
-    }
-    .secret-container::-webkit-scrollbar { display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Geist', sans-serif;
+            user-select: none;
+        }
 
-    button {
-      background: transparent;
-      border: 2px solid var(--accent);
-      color: #ff6666;
-      padding: 16px 36px;
-      margin: 12px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    button:hover {
-      background: var(--accent);
-      color: black;
-      transform: translateY(-4px);
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 22px;
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 20px;
-    }
+        .game-container {
+            background: var(--card-bg);
+            padding: 3rem 4rem;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 90%;
+            max-width: 550px;
+        }
 
-    #binary-rain {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -1;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-  </style>
+        /* Header con racha y objetivo */
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .streak-counter span, .record-counter span {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* Pantallas de objetivo y cronómetro */
+        .target-section {
+            text-align: center;
+        }
+
+        .target-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .target-time {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+            transition: color 0.2s ease;
+        }
+
+        /* Estados visuales de la barra espaciadora / preparación */
+        body.is-preparing .timer-display {
+            color: #fbbf24; /* Tono cálido tipo CSTimer al mantener sostenido */
+        }
+
+        body.is-running .timer-display {
+            color: var(--accent-active);
+        }
+
+        /* Indicador de puntuación / resultado */
+        .result-box {
+            min-height: 40px;
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .diff-display {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Instrucciones */
+        .instructions {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.5;
+            background: rgba(24, 24, 27, 0.8);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--text-muted);
+        }
+
+        /* Animaciones */
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
 </head>
 <body>
 
-  <header onclick="enterSecret()">
-    <h1>THE RUBIK'S THEORY</h1>
-    <p style="margin-top: 15px; font-size: 1.35rem; opacity: 0.95;">Comprende el cubo antes de dominarlo</p>
-  </header>
+    <div class="game-container">
+        <div class="stats-header">
+            <div class="streak-counter">Racha: <span id="streak">0</span></div>
+            <div class="record-counter">Mejor Racha: <span id="bestStreak">0</span></div>
+        </div>
 
-  <!-- TEORÍA -->
-  <div id="theory" style="padding: 40px 20px; text-align:center; max-width:900px; margin:0 auto;">
-    <h2>La Teoría del Cubo de Rubik</h2>
-    <p>El Cubo de Rubik fue inventado en 1974 por Ernő Rubik.</p>
-    <h3>Método Principiante - Los 7 Pasos</h3>
-    <ol style="display:inline-block; text-align:left; font-size:1.1rem;">
-      <li>Cruz Blanca</li>
-      <li>Esquinas Blancas</li>
-      <li>Capa Media</li>
-      <li>Cruz Amarilla</li>
-      <li>Orientar Bordes Amarillos</li>
-      <li>Esquinas Amarillas</li>
-      <li>Orientar Esquinas Amarillas</li>
-    </ol>
-  </div>
+        <div class="target-section">
+            <div class="target-label">Tiempo Objetivo</div>
+            <div class="target-time"><span id="targetTime">0.00</span>s</div>
+        </div>
 
-  <!-- ZONA SECRETA -->
-  <div id="secret" style="display: none;">
-    <canvas id="binary-rain"></canvas>
-    
-    <div class="secret-container">
-      <button onclick="toggleSpotify()">Abrir Spotify</button>
-      
-      <div id="games-grid" class="games-grid"></div>
+        <div class="timer-display" id="timer">0.00</div>
 
-      <div style="margin-top: 40px;">
-        <button onclick="showAdmin()">Panel de Administrador</button>
-      </div>
+        <div class="result-box" id="resultBox">
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="diff-display" id="diffDisplay"></div>
+        </div>
+
+        <div class="instructions" id="instructions">
+            Mantén la <strong>BARRA ESPACIADORA</strong> presionada para preparar. Suéltala para empezar a correr el tiempo. Presiónala de nuevo (o vuelve a soltar, según la fase) para detenerlo y clavar el objetivo.
+        </div>
     </div>
-  </div>
 
-  <!-- Spotify -->
-  <div id="spotify-embed" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; width:90%; max-width:720px;">
-    <div style="width:100%; height:352px; position:relative; background:#000; border-radius:12px; overflow:hidden;">
-      <iframe src="https://open.spotify.com/embed/playlist/6hfxHDFSpmrx2EeA7JKwjv" 
-              style="width:100%; height:100%; border:0;" allowfullscreen></iframe>
-    </div>
-    <button onclick="toggleSpotify()" style="margin-top:8px; background:#ff0000; color:black; width:100%;">Cerrar Spotify</button>
-  </div>
+    <script>
+        const STATES = {
+            IDLE: 'idle',         // Esperando a que mantengan espacio
+            PREPARING: 'preparing', // Espacio mantenido, listo para soltar
+            RUNNING: 'running',   // Tiempo corriendo
+            STOPPED: 'stopped'    // Cronómetro detenido
+        };
 
-  <!-- Admin Panel -->
-  <div id="admin-panel" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#110000; border:3px solid #ff0000; padding:25px; z-index:10000; color:#ff9999; max-width:480px; width:90%;">
-    <h3>Panel de Administrador</h3>
-    <input type="password" id="admin-pass" placeholder="Contraseña" style="width:100%; padding:12px; margin:10px 0;">
-    <button onclick="loginAdmin()" style="width:100%;">Entrar</button>
-    
-    <div id="admin-content" style="display:none; margin-top:20px;">
-      <input type="text" id="gname" placeholder="Nombre del juego" style="width:100%; padding:10px; margin:8px 0;">
-      <input type="url" id="gurl" placeholder="URL del juego" style="width:100%; padding:10px; margin:8px 0;">
-      <button onclick="addGame()" style="width:100%;">Añadir Juego</button>
-      <ul id="game-list" style="text-align:left; margin-top:20px;"></ul>
-      <button onclick="logoutAdmin()" style="width:100%; margin-top:15px;">Cerrar Sesión</button>
-    </div>
-  </div>
+        let currentState = STATES.IDLE;
+        let targetTime = 0.00;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        
+        let streak = 0;
+        let bestStreak = 0;
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA5mRsf1GX2E5vdlBBubUoaiH-aMBEE8KQ",
-      authDomain: "the-rubik-s-theory.firebaseapp.com",
-      databaseURL: "https://the-rubik-s-theory-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "the-rubik-s-theory",
-      storageBucket: "the-rubik-s-theory.firebasestorage.app",
-      messagingSenderId: "396416137658",
-      appId: "1:396416137658:web:e971da54cdd3a7ffb3c583"
-    };
+        // Elementos DOM
+        const body = document.body;
+        const timerEl = document.getElementById('timer');
+        const targetTimeEl = document.getElementById('targetTime');
+        const streakEl = document.getElementById('streak');
+        const bestStreakEl = document.getElementById('bestStreak');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const diffDisplay = document.getElementById('diffDisplay');
+        const instructionsEl = document.getElementById('instructions');
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const gamesRef = db.ref('games');
-
-    let games = [];
-
-    function loadGames() {
-      gamesRef.on('value', (snapshot) => {
-        games = [];
-        snapshot.forEach(child => games.push({ id: child.key, ...child.val() }));
-        renderGames();
-      });
-    }
-
-    function renderGames() {
-      const grid = document.getElementById('games-grid');
-      grid.innerHTML = '';
-      games.forEach(game => {
-        const btn = document.createElement('button');
-        btn.textContent = game.name;
-        btn.onclick = () => openGame(game.url);
-        grid.appendChild(btn);
-      });
-    }
-
-    // Abrir en about:blank
-    function openGame(url) {
-      const win = window.open('about:blank', '_blank');
-      if (win) {
-        win.document.write(`
-          <!DOCTYPE html>
-          <html><head><title>Juego</title></head>
-          <body style="margin:0;padding:0;overflow:hidden;background:#000;">
-            <iframe src="${url}" style="width:100vw;height:100vh;border:none;" allowfullscreen></iframe>
-          </body></html>
-        `);
-        win.document.close();
-      }
-    }
-
-    function addGame() {
-      const name = document.getElementById('gname').value.trim();
-      const url = document.getElementById('gurl').value.trim();
-      if (name && url) {
-        gamesRef.push({ name, url });
-        document.getElementById('gname').value = '';
-        document.getElementById('gurl').value = '';
-      }
-    }
-
-    function removeGame(id) {
-      if (confirm('¿Eliminar este juego?')) gamesRef.child(id).remove();
-    }
-
-    function renderAdminList() {
-      const ul = document.getElementById('game-list');
-      ul.innerHTML = '';
-      games.forEach(game => {
-        const li = document.createElement('li');
-        li.style.margin = '10px 0';
-        li.innerHTML = `${game.name} — <button onclick="removeGame('${game.id}')">Eliminar</button>`;
-        ul.appendChild(li);
-      });
-    }
-
-    function enterSecret() {
-      document.getElementById('theory').style.display = 'none';
-      document.getElementById('secret').style.display = 'block';
-      loadGames();
-    }
-
-    const ADMIN_PASSWORD = "28815342";
-
-    function showAdmin() { document.getElementById('admin-panel').style.display = 'block'; }
-    function loginAdmin() {
-      if (document.getElementById('admin-pass').value === ADMIN_PASSWORD) {
-        document.getElementById('admin-content').style.display = 'block';
-        renderAdminList();
-      } else alert('Contraseña incorrecta');
-    }
-    function logoutAdmin() {
-      document.getElementById('admin-panel').style.display = 'none';
-      document.getElementById('admin-content').style.display = 'none';
-    }
-
-    function toggleSpotify() {
-      const embed = document.getElementById('spotify-embed');
-      embed.style.display = embed.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // Lluvia Matrix
-    function createBinaryRain() {
-      const canvas = document.getElementById('binary-rain');
-      const ctx = canvas.getContext('2d');
-      function resize() {
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      const chars = '01';
-      const fontSize = 18;
-      const columns = canvas.width / fontSize;
-      const drops = Array(Math.floor(columns)).fill(1);
-
-      function draw() {
-        ctx.fillStyle = 'rgba(0,0,0,0.12)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#ff5555';
-        ctx.font = `${fontSize}px monospace`;
-        for (let i = 0; i < drops.length; i++) {
-          ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, drops[i]*fontSize);
-          if (drops[i]*fontSize > canvas.height && Math.random() > 0.96) drops[i] = 0;
-          drops[i]++;
+        // Generar un objetivo aleatorio entre 1.00 y 10.00 segundos (con 2 decimales)
+        function generateTarget() {
+            targetTime = Math.floor(Math.random() * 901 + 100) / 100; // de 1.00 a 10.00
+            targetTimeEl.textContent = targetTime.toFixed(2);
         }
-      }
-      setInterval(draw, 35);
-    }
 
-    window.onload = () => createBinaryRain();
-  </script>
+        generateTarget();
+
+        // Manejador de teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Evita que la página haga scroll al pulsar espacio
+
+                if (currentState === STATES.IDLE) {
+                    currentState = STATES.PREPARING;
+                    body.classList.add('is-preparing');
+                    instructionsEl.innerHTML = "Sueltala <strong>BARRA ESPACIADORA</strong> para iniciar el conteo...";
+                } 
+                else if (currentState === STATES.RUNNING) {
+                    stopTimer();
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                if (currentState === STATES.PREPARING) {
+                    startTimer();
+                } 
+                // Si estaba corriendo, el requisito de parar puede ser volver a pulsar o soltar según prefieras, 
+                // pero como pusimos que se detiene al volver a pulsar (keydown), dejamos el keyup libre o para otro propósito.
+            }
+        });
+
+        function startTimer() {
+            currentState = STATES.RUNNING;
+            body.classList.remove('is-preparing');
+            body.classList.add('is-running');
+            
+            // Reiniciar visuales anteriores
+            scoreDisplay.textContent = '';
+            diffDisplay.textContent = '';
+            
+            startTime = performance.now();
+            
+            timerInterval = setInterval(() => {
+                let now = performance.now();
+                elapsedTime = (now - startTime) / 1000;
+                timerEl.textContent = elapsedTime.toFixed(2);
+            }, 10); // Actualización fluida cada 10ms
+            
+            instructionsEl.innerHTML = "Pulsa otra vez para <strong>DETENER</strong> el tiempo...";
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            currentState = STATES.STOPPED;
+            body.classList.remove('is-running');
+            
+            // Cálculo de puntuación sobre 10
+            let difference = Math.abs(elapsedTime - targetTime);
+            
+            // Puntuación: si la diferencia es 0 -> 10. Si la diferencia es >= 1.00s -> 0.
+            let rawScore = 10 - (difference * 10);
+            let finalScore = Math.max(0, rawScore); 
+            
+            // Mostrar resultado visual
+            scoreDisplay.textContent = `Nota: ${finalScore.toFixed(2)} / 10`;
+            diffDisplay.textContent = `Diferencia: ${difference >= 0 ? '+' : ''}${(elapsedTime - targetTime).toFixed(2)}s`;
+            
+            // Sistema de racha estricto: consideremos éxito si sacas un 8.00 o más (tolerancia de 0.20s respecto al objetivo)
+            if (finalScore >= 8.00) {
+                streak++;
+                streakEl.textContent = streak;
+                if (streak > bestStreak) {
+                    bestStreak = streak;
+                    bestStreakEl.textContent = bestStreak;
+                }
+                scoreDisplay.style.color = 'var(--accent-success)';
+            } else {
+                streak = 0;
+                streakEl.textContent = streak;
+                scoreDisplay.style.color = 'var(--accent-danger)';
+            }
+            
+            // Preparar siguiente ronda tras un breve instante
+            setTimeout(() => {
+                generateTarget();
+                timerEl.textContent = "0.00";
+                currentState = STATES.IDLE;
+                instructionsEl.innerHTML = "Mantén la <strong>BARRA ESPACIADORA</strong> presionada para preparar la siguiente ronda.";
+            }, 2500); // 2.5 segundos para leer tu nota y pasar al siguiente
+        }
+    </script>
 </body>
 </html>
