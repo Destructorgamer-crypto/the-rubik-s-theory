@@ -8,10 +8,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
         :root {
-            --bg-color: #201321; /* Tono oscuro minimalista tipo dialed.gg */
+            --bg-color: #201321; 
             --card-bg: #321f33;
             --text-main: #ffffff;
-            --text-muted: #a88ca9;
+            --text-muted: #e0cbe1;
             --prep-color: #fca5a5;
             --run-color: #93c5fd;
             --success-color: #86efac;
@@ -35,24 +35,23 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.4s ease;
         }
 
-        /* Ocupa toda la pantalla, tarjeta elegante estilo web app */
         .game-card {
             background-color: var(--card-bg);
             width: 100%;
-            max-width: 650px;
-            height: 580px;
-            border-radius: 32px;
+            max-width: 700px;
+            height: 620px;
+            border-radius: 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 2.5rem 3rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 3rem 3.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
         }
 
         .card-top {
@@ -61,15 +60,15 @@
             align-items: center;
         }
 
-        .streak-display {
-            font-size: 0.95rem;
+        .streak-display, .round-display {
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-muted);
             letter-spacing: 0.5px;
         }
 
         .target-display {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--text-main);
         }
@@ -84,17 +83,18 @@
         }
 
         .timer-val {
-            font-size: 8.5rem;
+            font-size: 9.5rem;
             font-weight: 300;
             font-variant-numeric: tabular-nums;
             letter-spacing: -4px;
             color: var(--text-main);
-            transition: color 0.15s ease;
+            transition: color 0.2s ease;
         }
 
-        /* Cambios de estado en el temporizador */
+        /* Cambios de estado temporizador */
         body.state-preparing .timer-val {
             color: var(--prep-color);
+            animation: shakePrep 0.3s ease-in-out infinite alternate;
         }
 
         body.state-running .timer-val {
@@ -102,22 +102,22 @@
         }
 
         .score-label {
-            font-size: 1.1rem;
-            font-weight: 400;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: var(--text-muted);
             text-align: center;
-            min-height: 20px;
+            min-height: 25px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         .score-val {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             font-weight: 700;
             text-align: center;
-            min-height: 65px;
+            min-height: 85px;
             color: var(--text-main);
-            transition: color 0.2s ease;
+            transition: color 0.3s ease;
         }
 
         .card-bottom {
@@ -127,54 +127,81 @@
         }
 
         .instructions {
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            max-width: 380px;
-            line-height: 1.4;
+            max-width: 420px;
+            line-height: 1.5;
+            font-weight: 400;
         }
 
         .btn-next {
-            width: 56px;
-            height: 56px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
+            transition: background 0.3s, transform 0.3s;
             border: none;
             outline: none;
         }
 
         .btn-next:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1) rotate(90deg);
         }
 
         .btn-next svg {
             fill: var(--text-main);
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
         }
 
-        /* Animaciones para la tarjeta */
+        /* Animaciones */
         .animate-pulse-subtle {
             animation: pulseSubtle 0.6s infinite alternate;
         }
 
         @keyframes pulseSubtle {
             0% { transform: scale(1); }
-            100% { transform: scale(1.015); }
+            100% { transform: scale(1.02); }
         }
 
         .animate-pop {
-            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.9); }
+            0% { opacity: 0; transform: scale(0.85); }
             100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shakePrep {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-3px); }
+        }
+
+        .animate-, .animate-shake {
+            animation: shakeTotal 0.4s ease-in-out;
+        }
+
+        @keyframes shakeTotal {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
+        }
+
+        .fade-in {
+            animation: fadeInMsg 0.5s ease-in;
+        }
+
+        @keyframes fadeInMsg {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -183,6 +210,7 @@
     <div class="game-card" id="gameCard">
         <div class="card-top">
             <div class="streak-display">Racha: <span id="streakVal">0</span></div>
+            <div class="round-display">Ronda: <span id="roundVal">1</span>/5</div>
             <div class="target-display">Objetivo: <span id="targetVal">0.00</span>s</div>
         </div>
 
@@ -215,11 +243,11 @@
             osc.type = type;
             osc.frequency.value = freq;
             
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
             if(ramp) {
                 gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
             } else {
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime + duration - 0.05);
+                gain.gain.setValueAtTime(0.18, audioCtx.currentTime + duration - 0.05);
                 gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
             }
 
@@ -234,7 +262,8 @@
             IDLE: 0,
             PREPARING: 1,
             RUNNING: 2,
-            STOPPED: 3
+            STOPPED: 3,
+            SUMMARY: 4
         };
 
         let currentState = GAME_STATES.IDLE;
@@ -243,6 +272,8 @@
         let timerInterval = null;
         let elapsedTime = 0;
         let streak = 0;
+        let round = 1;
+        let totalScore = 0;
         let chargeInterval = null;
         let chargePitch = 150;
 
@@ -250,6 +281,7 @@
         const gameCard = document.getElementById('gameCard');
         const targetVal = document.getElementById('targetVal');
         const streakVal = document.getElementById('streakVal');
+        const roundVal = document.getElementById('roundVal');
         const timerVal = document.getElementById('timerVal');
         const scoreLabel = document.getElementById('scoreLabel');
         const scoreVal = document.getElementById('scoreVal');
@@ -257,7 +289,6 @@
         const nextBtn = document.getElementById('nextBtn');
 
         function generateTarget() {
-            // Entre 1.00s y 10.00s con dos decimales
             targetTime = Math.floor(Math.random() * 901 + 100) / 100;
             targetVal.textContent = targetTime.toFixed(2);
         }
@@ -267,18 +298,31 @@
             scoreLabel.textContent = "";
             scoreVal.textContent = "";
             body.className = '';
+            scoreVal.className = 'score-val';
+            instructions.className = 'instructions';
+            gameCard.className = 'game-card';
         }
 
         function nextRound() {
+            if (currentState === GAME_STATES.SUMMARY) {
+                round = 1;
+                totalScore = 0;
+                streak = 0;
+                streakVal.textContent = streak;
+            } else if (currentState !== GAME_STATES.STOPPED && currentState !== GAME_STATES.IDLE) {
+                return;
+            }
+            
             resetGameDisplay();
             generateTarget();
+            roundVal.textContent = round;
             currentState = GAME_STATES.IDLE;
             instructions.textContent = "Mantén espacio para cargar. Suelta para iniciar.";
+            gameCard.classList.add('animate-pop');
         }
 
         nextBtn.addEventListener('click', nextRound);
 
-        // Inicializar
         generateTarget();
 
         window.addEventListener('keydown', (e) => {
@@ -290,7 +334,6 @@
                     body.className = 'state-preparing';
                     instructions.textContent = "Cargando... Suelta para empezar.";
                     
-                    // Sonido progresivo de Carga (Hum / Baja frecuencia)
                     chargePitch = 150;
                     chargeInterval = setInterval(() => {
                         if(chargePitch < 300) chargePitch += 10;
@@ -317,7 +360,6 @@
             body.className = 'state-running';
             instructions.textContent = "Pulsa espacio otra vez para parar.";
             
-            // Sonido de inicio de carrera
             playTone(600, 0.15, 'triangle');
 
             timerStart = performance.now();
@@ -326,7 +368,6 @@
                 elapsedTime = (now - timerStart) / 1000;
                 timerVal.textContent = elapsedTime.toFixed(2);
 
-                // Pequeño tick cada segundo para dar feedback sonoro táctil
                 if (Math.floor(elapsedTime) > Math.floor(elapsedTime - 0.01)) {
                     playTone(400, 0.05, 'sine');
                 }
@@ -339,30 +380,63 @@
             body.className = '';
 
             let diff = Math.abs(elapsedTime - targetTime);
-            // Puntuación sobre 10 (fórmula: 10 - (diferencia * 10), min 0)
             let rawScore = 10 - (diff * 10);
-            let finalScore = Math.max(0, rawScore).toFixed(2);
+            let finalScore = Math.max(0, rawScore);
+
+            totalScore += finalScore;
 
             timerVal.textContent = elapsedTime.toFixed(2);
-            scoreLabel.textContent = "Tu Nota";
-            scoreVal.textContent = finalScore + " / 10";
+            scoreLabel.textContent = `Nota Ronda ${round}`;
+            scoreVal.textContent = finalScore.toFixed(2) + " / 10";
             scoreVal.classList.add('animate-pop');
+            instructions.classList.add('fade-in');
 
-            // Umbral de éxito (Nota >= 8.00) considerado para mantener Racha
-            if (parseFloat(finalScore) >= 8.00) {
+            if (finalScore >= 8.00) {
                 streak++;
                 scoreVal.style.color = 'var(--success-color)';
-                playTone(880, 0.3, 'sine'); // Sonido agudo de acierto
+                playTone(880, 0.3, 'sine');
                 gameCard.classList.add('animate-pulse-subtle');
                 setTimeout(() => gameCard.classList.remove('animate-pulse-subtle'), 600);
+                instructions.textContent = "¡Increíble! Siguiente ronda...";
             } else {
                 streak = 0;
                 scoreVal.style.color = 'var(--fail-color)';
-                playTone(220, 0.3, 'sawtooth'); // Sonido grave fallo
+                playTone(220, 0.3, 'sawtooth');
+                gameCard.classList.add('animate-shake');
+                setTimeout(() => gameCard.classList.remove('animate-shake'), 400);
+                instructions.textContent = "Por poco... Siguiente ronda...";
             }
             
             streakVal.textContent = streak;
-            instructions.textContent = "Pulsa el botón de la flecha o recarga para la siguiente ronda.";
+
+            setTimeout(() => {
+                if (round < 5) {
+                    round++;
+                    nextRound();
+                } else {
+                    // Fin de 5 rondas -> Resumen total sobre 50
+                    currentState = GAME_STATES.SUMMARY;
+                    resetGameDisplay();
+                    
+                    targetVal.textContent = "-";
+                    roundVal.textContent = "5";
+                    
+                    scoreLabel.textContent = "NOTA TOTAL (5 RONDAS)";
+                    scoreVal.textContent = totalScore.toFixed(2) + " / 50.00";
+                    scoreVal.style.color = totalScore >= 40 ? 'var(--success-color)' : 'var(--text-main)';
+                    scoreVal.classList.add('animate-pop');
+                    
+                    playTone(1000, 0.2, 'sine');
+                    setTimeout(() => playTone(1200, 0.3, 'sine'), 200);
+
+                    if (totalScore >= 40) {
+                        gameCard.classList.add('animate-pulse-subtle');
+                        instructions.textContent = "¡Has dominado el tiempo! Pulsa el botón de reinicio para volver a jugar.";
+                    } else {
+                        instructions.textContent = "¡Partida finalizada! Pulsa el botón de reinicio para intentarlo de nuevo.";
+                    }
+                }
+            }, 3000);
         }
     </script>
 </body>
