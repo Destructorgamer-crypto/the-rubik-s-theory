@@ -8,14 +8,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
         :root {
-            --bg-color: #faf9f6; /* Blanco roto cálido y muy suave */
-            --card-bg: #ffffff; /* Tarjeta blanca pura */
-            --text-main: #111827; /* Gris oscuro casi negro */
-            --text-muted: #9ca3af; /* Gris elegante para textos secundarios */
-            --prep-color-start: #3b82f6; /* Azul suave para preparación */
+            --bg-color: #faf9f6; 
+            --card-bg: #ffffff; 
+            --text-main: #111827; 
+            --text-muted: #9ca3af; 
+            --prep-color-start: #3b82f6; 
             --prep-color-end: #60a5fa;
             --run-color: #1f2937;
-            --success-color: #10b981; /* Verde esmeralda para aciertos */
+            --success-color: #10b981; 
             --fail-color: #ef4444;
             --ok-color: #f59e0b;
         }
@@ -41,11 +41,11 @@
         }
 
         body.state-hard {
-            background-color: #1f2937;
-            --bg-color: #1f2937;
-            --card-bg: #111827;
+            background-color: #111827;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
             --text-main: #f3f4f6;
-            --text-muted: #6b7280;
+            --text-muted: #9ca3af;
             --run-color: #ffffff;
         }
 
@@ -53,7 +53,7 @@
             background-color: var(--card-bg);
             width: 100%;
             max-width: 680px;
-            height: 620px;
+            height: 660px;
             border-radius: 32px;
             display: flex;
             flex-direction: column;
@@ -90,24 +90,53 @@
             letter-spacing: 0.5px;
         }
 
-        .target-display {
-            font-size: 1.25rem;
+        /* Rediseño del bloque de objetivo */
+        .target-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            background: #f3f4f6;
+            padding: 10px 20px;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        body.state-hard .target-bar {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .target-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .target-value {
+            font-size: 1.5rem;
             font-weight: 900;
             color: var(--text-main);
+            font-variant-numeric: tabular-nums;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .hard- badge {
+        .hard-badge {
             background-color: #ef4444;
             color: white;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 900;
             padding: 2px 8px;
             border-radius: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            vertical-align: middle;
         }
 
         .main-display {
@@ -128,6 +157,13 @@
             color: var(--text-main);
             transition: all 0.3s ease;
             line-height: 0.9;
+        }
+
+        /* Ocultar cronómetro en modo difícil para aumentar dificultad */
+        body.state-hard.state-running .timer-val {
+            font-size: 2rem;
+            color: var(--text-muted);
+            opacity: 0.3;
         }
 
         body.state-preparing .timer-val {
@@ -196,8 +232,8 @@
         }
 
         body.state-hard .summary-box {
-            background: #1f2937;
-            border-color: #374151;
+            background: #374151;
+            border-color: #4b5563;
         }
 
         .summary-header {
@@ -299,8 +335,8 @@
         }
 
         body.state-hard .btn-reset {
-            background: #374151;
-            border-color: #4b5563;
+            background: #4b5563;
+            border-color: #6b7280;
         }
 
         .btn-reset:hover {
@@ -310,7 +346,7 @@
         }
 
         body.state-hard .btn-reset:hover {
-            background: #4b5563;
+            background: #6b7280;
         }
 
         .btn-reset svg {
@@ -352,8 +388,8 @@
         }
 
         body.state-hard .btn-restart-nav {
-            background: #374151;
-            border-color: #4b5563;
+            background: #4b5563;
+            border-color: #6b7280;
         }
 
         .btn-restart-nav:hover {
@@ -363,8 +399,8 @@
         }
 
         body.state-hard .btn-restart-nav:hover {
-            background: #4b5563;
-            border-color: #6b7280;
+            background: #6b7280;
+            border-color: #9ca3af;
         }
 
         .btn-restart-nav svg {
@@ -398,8 +434,8 @@
         }
 
         body.state-hard .restart-summary-label {
-            background: #374151;
-            border-color: #4b5563;
+            background: #4b5563;
+            border-color: #6b7280;
         }
         
         .btn-restart-summary {
@@ -418,12 +454,12 @@
         }
 
         body.state-hard .btn-restart-summary {
-            background: #374151;
-            border-color: #4b5563;
+            background: #4b5563;
+            border-color: #6b7280;
         }
 
         body.state-hard .btn-restart-summary:hover {
-            background: #4b5563;
+            background: #6b7280;
         }
 
         .btn-restart-summary:hover {
@@ -472,10 +508,6 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .timer-tick-anim {
-            transform: scale(1.05);
-        }
-
         .hard-mode-toggle {
             position: absolute;
             top: 24px;
@@ -497,9 +529,9 @@
         }
 
         body.state-hard .hard-mode-toggle {
-            background: #374151;
-            border-color: #4b5563;
-            color: #9ca3af;
+            background: #4b5563;
+            border-color: #6b7280;
+            color: #d1d5db;
         }
 
         .hard-mode-toggle:hover {
@@ -538,9 +570,13 @@
 
         <div class="card-top" id="cardTopBarContainer">
             <div class="round-display">Ronda: <span id="roundVal">1</span>/5</div>
-            <div class="target-display">
-                Objetivo: <span id="targetVal">0.00</span>s
-                <span id="hardBadge" style="display: none;" class="hard- badge">Difícil</span>
+        </div>
+
+        <div class="target-bar" id="targetBarWrapper">
+            <span class="target-label">Tiempo objetivo:</span>
+            <div class="target-value">
+                <span id="targetVal">0.00</span>s
+                <span id="hardBadge" style="display: none;" class="hard-badge">Difícil</span>
             </div>
         </div>
 
@@ -569,6 +605,57 @@
 
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Generador de ruido/glitch constante para modo difícil
+        let glitchNode = null;
+        let glitchInterval = null;
+
+        function startGlitchNoise() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            // Crea un buffer de ruido blanco aleatorio
+            const bufferSize = audioCtx.sampleRate * 0.5;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            glitchNode = audioCtx.createBufferSource();
+            glitchNode.buffer = buffer;
+            glitchNode.loop = true;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 800;
+            filter.Q.value = 0.5;
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+            glitchNode.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            glitchNode.start();
+
+            // Modulación aleatoria de frecuencia y ganancia para efecto glitch "constante y nervioso"
+            glitchInterval = setInterval(() => {
+                if (!hardMode || currentState !== GAME_STATES.RUNNING) return;
+                filter.frequency.value = Math.floor(Math.random() * 1500) + 300;
+                filter.type = Math.random() > 0.5 ? 'bandpass' : 'lowpass';
+                gainNode.gain.setValueAtTime(Math.random() * 0.08 + 0.02, audioCtx.currentTime);
+            }, 75);
+        }
+
+        function stopGlitchNoise() {
+            if (glitchInterval) clearInterval(glitchInterval);
+            if (glitchNode) {
+                try {
+                    glitchNode.stop();
+                } catch(e) {}
+            }
+        }
 
         function playTone(freq, duration, type = 'sine', ramp = true) {
             if (audioCtx.state === 'suspended') {
@@ -723,8 +810,6 @@
 
             generateTarget();
             roundVal.textContent = round;
-            roundVal.closest('.round-display').style.display = "flex";
-            targetVal.closest('.target-display').style.display = "flex";
             hardBadge.style.display = hardMode ? "inline-block" : "none";
             currentState = GAME_STATES.IDLE;
             instructions.textContent = "Mantén espacio para cargar. Suelta para iniciar el cronómetro.";
@@ -771,7 +856,6 @@
             }
             hardBadge.style.display = hardMode ? "inline-block" : "none";
             
-            // Si estamos en IDLE, regeneramos objetivo para adaptar los colores del badge si cambia
             if(currentState === GAME_STATES.IDLE) {
                 generateTarget();
             }
@@ -820,27 +904,40 @@
         function startTimer() {
             currentState = GAME_STATES.RUNNING;
             body.classList.add('state-running');
-            instructions.textContent = "Pulsa espacio otra vez para parar.";
             
-            playTone(600, 0.15, 'triangle');
+            if (hardMode) {
+                instructions.textContent = "Modo Difícil activo. ¡Cronómetro oculto! Pulsa espacio para parar.";
+                startGlitchNoise();
+            } else {
+                instructions.textContent = "Pulsa espacio otra vez para parar.";
+                playTone(600, 0.15, 'triangle');
+            }
 
             timerStart = performance.now();
             timerInterval = setInterval(() => {
                 let now = performance.now();
                 elapsedTime = (now - timerStart) / 1000;
                 
-                window.currTimerVal.textContent = elapsedTime.toFixed(2);
-
-                if (Math.floor(elapsedTime) > Math.floor(elapsedTime - 0.01)) {
-                    playTone(400, 0.05, 'sine');
-                    window.currTimerVal.classList.add('timer-tick-anim');
-                    setTimeout(() => window.currTimerVal.classList.remove('timer-tick-anim'), 150);
+                // Si estamos en modo difícil, no actualizamos el contador visible para añadir dificultad
+                if (!hardMode) {
+                    window.currTimerVal.textContent = elapsedTime.toFixed(2);
+                    if (Math.floor(elapsedTime) > Math.floor(elapsedTime - 0.01)) {
+                        playTone(400, 0.05, 'sine');
+                        window.currTimerVal.classList.add('timer-tick-anim');
+                        setTimeout(() => window.currTimerVal.classList.remove('timer-tick-anim'), 150);
+                    }
+                } else {
+                    window.currTimerVal.textContent = "??";
                 }
             }, 10);
         }
 
         function stopTimer() {
             clearInterval(timerInterval);
+            
+            if (hardMode) {
+                stopGlitchNoise();
+            }
 
             currentState = GAME_STATES.STOPPED;
             body.classList.remove('state-preparing', 'state-running');
@@ -890,7 +987,9 @@
             currentState = GAME_STATES.SUMMARY;
             
             const cardTop = document.getElementById('cardTopBarContainer');
+            const targetBar = document.getElementById('targetBarWrapper');
             if (cardTop) cardTop.style.display = "none";
+            if (targetBar) targetBar.style.display = "none";
             if (cardBottomNav) cardBottomNav.style.display = "none"; 
 
             restartSummaryContainer.style.display = "flex";
