@@ -314,8 +314,9 @@
             height: 60px;
         }
 
+        /* Explicación más pequeña */
         .instructions {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
             max-width: 450px;
@@ -714,16 +715,16 @@
         let chargePitch = 150;
         let roundScores = [];
         let hardMode = false;
-        let stopCooldown = false; // Bandera de seguridad para evitar que mantener espacio avance de golpe
+        let stopCooldown = false;
 
         const body = document.body;
         const gameCard = document.getElementById('gameCard');
-        const targetBarWrapper = document.getElementById('targetBarWrapper');
+        const targetBarWrapper = document.getElementById('targetBarWrapper') || document.getElementById('targetBarWrapper');
         const targetVal = document.getElementById('targetVal');
         const roundVal = document.getElementById('roundVal');
         const timerVal = document.getElementById('timerVal');
         const scoreLabel = document.getElementById('scoreLabel');
-        const scoreVal = document.getElementById('scoreVal');
+        let scoreVal = document.getElementById('scoreVal');
         const instructions = document.getElementById('instructions');
         const nextBtn = document.getElementById('nextBtn');
         const restartNavBtn = document.getElementById('restartNavBtn');
@@ -809,7 +810,7 @@
             if(roundDisplayEl) roundDisplayEl.textContent = round;
             hardBadge.style.display = hardMode ? "inline-block" : "none";
             currentState = GAME_STATES.IDLE;
-            stopCooldown = false; // Se resetea el bloqueo al cargar una ronda nueva
+            stopCooldown = false;
             instructions.textContent = "Mantén espacio para cargar. Suelta para iniciar el cronómetro.";
             gameCard.classList.add('animate-pop');
         }
@@ -862,7 +863,7 @@
         generateTarget();
         window.currTimerVal = timerVal;
         window.currScoreLabel = scoreLabel;
-        window.currScoreVal = scoreVal = scoreVal;
+        window.currScoreVal = scoreVal;
 
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
@@ -884,7 +885,6 @@
                 else if (currentState === GAME_STATES.RUNNING) {
                     stopTimer();
                 }
-                // Se añade la condición stopCooldown para evitar que la misma pulsación que detuvo el cronómetro lo salte de largo
                 else if (currentState === GAME_STATES.STOPPED && !stopCooldown) {
                     advanceRoundOrSummary();
                 }
@@ -897,7 +897,6 @@
                     clearInterval(chargeInterval);
                     startTimer();
                 } else if (currentState === GAME_STATES.STOPPED) {
-                    // Al soltar la tecla tras parar el tiempo, se levanta el bloqueo de seguridad
                     stopCooldown = false;
                 }
             }
@@ -941,7 +940,7 @@
             }
 
             currentState = GAME_STATES.STOPPED;
-            stopCooldown = true; // Activa el bloqueo para que la tecla pulsada no avance de pantalla de inmediato
+            stopCooldown = true;
             body.classList.remove('state-preparing', 'state-running');
 
             let finalScore = getCalculatedScore(elapsedTime, targetTime);
@@ -989,7 +988,7 @@
             currentState = GAME_STATES.SUMMARY;
             
             const cardTop = document.getElementById('TopBarWithRounds');
-            const targetBar = document.getElementById('targetBarWrapper');
+            const targetBar = document.getElementById('targetBarWrapper') || document.getElementById('targetBarWrapper');
             if (cardTop) cardTop.style.display = "none";
             if (targetBar) targetBar.style.display = "none";
             if (cardBottomNav) cardBottomNav.style.display = "none"; 
